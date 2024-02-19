@@ -26,6 +26,12 @@ const FilterText = styled.span`
   margin-right: 20px;
 `;
 
+const Select = styled.select`
+  padding: 10px;
+  margin-right: 20px;
+  cursor: pointer;
+`;
+
 const ProductList = () => {
   return (
     <Container>
@@ -35,9 +41,29 @@ const ProductList = () => {
       <FilterContainer>
         <Filter>
           <FilterText>Filter Products:</FilterText>
+          <Select>
+            <option disabled>Color</option>
+            <option value="white">White</option>
+            <option value="black">Black</option>
+            <option value="red">Red</option>
+            <option value="blue">Blue</option>
+            <option value="yellow">Yellow</option>
+            <option value="green">Green</option>
+          </Select>
+          <Select>
+            <option disabled>Size</option>
+            <option value="small">Small</option>
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
+          </Select>
         </Filter>
         <Filter>
           <FilterText>Sort Products:</FilterText>
+          <Select>
+            <option value="newest">Newest</option>
+            <option value="asc">Price (asc)</option>
+            <option value="desc">Price (desc)</option>
+          </Select>
         </Filter>
       </FilterContainer>
       <Products />
