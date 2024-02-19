@@ -43,3 +43,32 @@ const categories = [
 ];
 
 export { categories };
+
+const popularProducts = [
+  {
+    id: 1,
+    img: "https://images.pexels.com/photos/5157291/pexels-photo-5157291.jpeg?auto=compress&cs=tinysrgb&w=600",
+  },
+  {
+    id: 2,
+    img: "https://images.pexels.com/photos/3634366/pexels-photo-3634366.jpeg?auto=compress&cs=tinysrgb&w=600",
+  },
+  {
+    id: 3,
+    img: "https://images.pexels.com/photos/4960230/pexels-photo-4960230.jpeg?auto=compress&cs=tinysrgb&w=600",
+  },
+  {
+    id: 4,
+    img: "https://images.pexels.com/photos/6858599/pexels-photo-6858599.jpeg?auto=compress&cs=tinysrgb&w=600",
+  },
+  {
+    id: 5,
+    img: "https://images.pexels.com/photos/1687719/pexels-photo-1687719.jpeg?auto=compress&cs=tinysrgb&w=600",
+  },
+  {
+    id: 6,
+    img: "https://images.pexels.com/photos/3387577/pexels-photo-3387577.jpeg?auto=compress&cs=tinysrgb&w=600",
+  }
+];
+
+export { popularProducts };
