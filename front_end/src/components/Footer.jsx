@@ -20,9 +20,7 @@ const Left = styled.div`
   padding: 20px;
 `;
 
-const Logo = styled.h1`
-  font-weight: 500;
-`;
+const Logo = styled.h1``;
 
 const Desc = styled.p`
   margin: 20px 0px;
@@ -51,7 +49,6 @@ const Center = styled.div`
 
 const Title = styled.h3`
   margin-bottom: 30px;
-  font-weight: 500;
 `;
 
 const List = styled.ul`
