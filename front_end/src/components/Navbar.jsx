@@ -5,12 +5,39 @@ const Container = styled.div`
   background-color: #f0f0f0;
 `;
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+`;
+const Left = styled.div`
+  flex: 1;
+`;
+
+const Language = styled.span`
+  cursor: pointer;
+  font-size: 14px;
+`;
+
+const Center = styled.div`
+  flex: 1;
+`;
+
+const Right = styled.div`
+  flex: 1;
+`;
 
 const Navbar = () => {
   return (
     <Container>
-      <Wrapper></Wrapper>
+      <Wrapper>
+        <Left>
+          <Language>EN</Language>
+          <SearchContainer></SearchContainer>
+        </Left>
+        <Center>center</Center>
+        <Right>right</Right>
+      </Wrapper>
     </Container>
   );
 };
