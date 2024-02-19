@@ -3,7 +3,7 @@ import { Search, ShoppingCartOutlined } from "@material-ui/icons";
 import { Badge } from "@mui/material";
 
 const Container = styled.div`
-  height: 60px;
+  height: 70px;
   background-color: #f0f0f0;
 `;
 
@@ -67,7 +67,7 @@ const Navbar = () => {
           <Language>EN</Language>
           <SearchContainer>
             <Input />
-            <Search />
+            <Search style={{color: "gray", fontSize: 16}}/>
           </SearchContainer>
         </Left>
         <Center>
