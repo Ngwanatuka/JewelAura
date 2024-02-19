@@ -6,7 +6,8 @@ const Container = styled.div`
   background: linear-gradient(
     rgba(255, 255, 255, 0.5),
     rgba(255, 255, 255, 0.5),
-    url("https://images.pexels.com/photos/3183154/pexels-photo-3183154.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940") center;
+    url("https://images.pexels.com/photos/3387552/pexels-photo-3387552.jpeg?auto=compress&cs=tinysrgb&w=600")
+      center;
   );
   display: flex;
   align-items: center;
