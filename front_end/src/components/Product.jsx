@@ -1,10 +1,10 @@
+/* eslint-disable react/prop-types */
 import {
   FavoriteBorderOutlined,
   SearchOutlined,
   ShoppingCartOutlined,
 } from "@material-ui/icons";
 import styled from "styled-components";
-import PropTypes from "prop-types";
 
 const Info = styled.div`
   width: 100%;
@@ -51,8 +51,6 @@ const Image = styled.img`
   z-index: 2;
 `;
 
-
-
 const Icon = styled.div`
   width: 40px;
   height: 40px;
@@ -88,12 +86,6 @@ const Product = ({ item }) => {
       </Info>
     </Container>
   );
-};
-
-Product.protoTypes = {
-  item: PropTypes.shape({
-    img: PropTypes.string.isRequired,
-  }),
 };
 
 export default Product;
