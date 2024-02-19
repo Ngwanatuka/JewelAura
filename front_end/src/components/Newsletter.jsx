@@ -13,6 +13,7 @@ const Container = styled.div`
 const Title = styled.h1`
   font-size: 70px;
   margin-bottom: 20px;
+  font-weight: 300;
 `;
 
 const Desc = styled.div`
