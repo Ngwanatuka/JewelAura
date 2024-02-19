@@ -6,6 +6,22 @@ import {
 import styled from "styled-components";
 import PropTypes from "prop-types";
 
+const Info = styled.div`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  display: flex;
+  z-index: 3;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.5s ease;
+  cursor: pointer;
+`;
+
 const Container = styled.div`
   flex: 1;
   margin: 5px;
@@ -16,6 +32,9 @@ const Container = styled.div`
   justify-content: center;
   background-color: #f5fafd;
   position: relative;
+  &:hover ${Info} {
+    opacity: 1;
+  }
 `;
 
 const Circle = styled.div`
@@ -26,23 +45,13 @@ const Circle = styled.div`
 `;
 
 const Image = styled.img`
+  width: 75%;
   height: 75%;
   object-fit: cover;
   z-index: 2;
 `;
 
-const Info = styled.div`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  background-color: gray;
-  display: flex;
-  z-index: 3;
-  align-items: center;
-  justify-content: center;
-`;
+
 
 const Icon = styled.div`
   width: 40px;
@@ -58,7 +67,6 @@ const Icon = styled.div`
   &:hover {
     background-color: #e9f5f5;
     transform: scale(1.1);
-  
   }
 `;
 
