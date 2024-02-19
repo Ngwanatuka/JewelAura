@@ -71,7 +71,7 @@ const popularProducts = [
   },
   {
     id: 7,
-    img: "https://images.pexels.com/photos/1413420/pexels-photo-1413420.jpeg?auto=compress&cs=tinysrgb&w=600",
+    img: "https://images.pexels.com/photos/2849743/pexels-photo-2849743.jpeg?auto=compress&cs=tinysrgb&w=600",
   },
   {
     id: 8,
