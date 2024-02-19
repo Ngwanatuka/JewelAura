@@ -9,8 +9,8 @@ export const App = () => {
     // <Home />
     // <ProductList />
     // <Product />
-    // <Register />
-    <Login />
+    <Register />
+    // <Login />
   );
 };
 
