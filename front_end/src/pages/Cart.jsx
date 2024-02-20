@@ -70,6 +70,7 @@ const Details = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+  gap: 20px;
 `;
 
 const ProductName = styled.span``;
