@@ -6,7 +6,7 @@ import { mobile } from "../responsive";
 const Container = styled.div`
   height: 70px;
   background-color: #f0f0f0;
-  ${mobile({ height: "50px"})}
+  ${mobile({ height: "50px", bakgroundColor: "red"})}
 `;
 
 const Wrapper = styled.div`
@@ -34,6 +34,7 @@ const SearchContainer = styled.div`
   border: 1px solid lightgray;
   margin-left: 25px;
   padding: 5px;
+  ${mobile({ marginLeft: "10px"})}
 `;
 
 const Input = styled.input`
@@ -49,7 +50,7 @@ const Center = styled.div`
 
 const Logo = styled.h1`
   font-weight: 500;
-  ${mobile({ fontSize: "10px"})}
+  ${mobile({ fontSize: "10px", fontWeight: "100"})}
 `;
 
 const Right = styled.div`

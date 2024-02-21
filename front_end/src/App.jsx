@@ -4,15 +4,18 @@ import ProductList from "./pages/ProductList";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Cart from "./pages/Cart";
+import { StyleSheetManager } from "styled-components";
 
 export const App = () => {
   return (
-    <Home />
-    // <ProductList />
-    // <Product />
-    // <Register />
-    // <Login />
-    // <Cart />
+    <StyleSheetManager shouldForwardProp={(prop) => prop !== 'slideIndex' && prop !== 'bg'}>
+      <Home />
+      {/* <Product /> */}
+      {/* <ProductList /> */}
+      {/* <Register /> */}
+      {/* <Login /> */}
+      {/* <Cart /> */}
+    </StyleSheetManager>
   );
 };
 
