@@ -7,12 +7,12 @@ import Cart from "./pages/Cart";
 
 export const App = () => {
   return (
-    // <Home />
+    <Home />
     // <ProductList />
     // <Product />
     // <Register />
     // <Login />
-    <Cart />
+    // <Cart />
   );
 };
 

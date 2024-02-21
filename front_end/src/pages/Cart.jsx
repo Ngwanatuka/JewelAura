@@ -177,7 +177,7 @@ const Cart = () => {
                   </ProductId>
                   <ProductColor color="Gold" />
                   <ProductSize>
-                    <b>Size:</b> 37.5
+                    <b>Size:</b> 17
                   </ProductSize>
                 </Details>
               </ProductDetail>
