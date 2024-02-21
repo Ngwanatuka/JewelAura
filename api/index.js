@@ -1,10 +1,13 @@
 import express from "express";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 // Connect to MongoDB
 mongoose
   .connect(
-    "mongodb+srv://ngwanatuka:1Fjieqmi21@cluster0.xvlz1a9.mongodb.net/shop?retryWrites=true&w=majority"
+    process.env.MONGO_URL,
   )
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.log("Error: ", err));
