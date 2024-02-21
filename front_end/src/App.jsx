@@ -9,8 +9,8 @@ import { StyleSheetManager } from "styled-components";
 export const App = () => {
   return (
     <StyleSheetManager shouldForwardProp={(prop) => prop !== 'slideIndex' && prop !== 'bg'}>
-      <Home />
-      {/* <Product /> */}
+      {/* <Home /> */}
+      <Product />
       {/* <ProductList /> */}
       {/* <Register /> */}
       {/* <Login /> */}
