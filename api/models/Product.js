@@ -33,6 +33,6 @@ const ProducSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const User = mongoose.model("User", ProducSchema);
+const Product = mongoose.model("Product", ProducSchema);
 
-export default User;
+export default Product;
