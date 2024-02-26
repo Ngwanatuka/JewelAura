@@ -33,6 +33,6 @@ const OrderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const User = mongoose.model("User", OrderSchema);
+const Order = mongoose.model("Order", OrderSchema);
 
-export default User;
+export default Order;
