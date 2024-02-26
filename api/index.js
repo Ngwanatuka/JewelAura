@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import userRoutes from "./routes/user.js";
 import authRoutes from "./routes/auth.js";
 import productRoutes from "./routes/product.js";
+import cartRoutes from "./routes/cart.js";
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.get("/api/test", () => {
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/carts", cartRoutes);
 
 app.listen(process.env.PORT || 8000, () => {
   console.log("Server is running");

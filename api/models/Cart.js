@@ -21,6 +21,6 @@ const CartSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const User = mongoose.model("User", CartSchema);
+const Cart = mongoose.model("Cart", CartSchema);
 
-export default User;
+export default Cart;
