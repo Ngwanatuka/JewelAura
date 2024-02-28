@@ -5,7 +5,7 @@ import Announcements from "../components/Announcements";
 import { Add, Remove } from "@material-ui/icons";
 import { mobile } from "../responsive";
 import PayPalButton from "../components/PayPalButtons";
-// import { useState } from "react";
+import { useState } from "react";
 
 const Container = styled.div``;
 
@@ -157,11 +157,16 @@ const Button = styled.button`
   color: white;
   font-weight: 600;
 `;
+
+const PayPalBtn = styled.div`
+  margin-top: 10px;
+`;
+
 const Cart = () => {
-  // const [showPayPal, setShowPayPal] = useState(false);
-  // const handleClick = () => {
-  //   setShowPayPal(true);
-  // };
+  const [showPayPal, setShowPayPal] = useState(false);
+  const handleClick = () => {
+    setShowPayPal(true);
+  };
   return (
     <Container>
       <Announcements />
@@ -248,11 +253,16 @@ const Cart = () => {
               <SummaryItemText>Total</SummaryItemText>
               <SummaryItemPrice>R 80</SummaryItemPrice>
             </SummaryItem>
-            <Button>CHECKOUT NOW</Button>
+            <Button onClick={handleClick}>CHECKOUT NOW</Button>
+            {showPayPal && (
+              <PayPalBtn>
+                <PayPalButton />
+              </PayPalBtn>
+            )}
           </Summary>
         </Bottom>
       </Wrapper>
-      <PayPalButton />
+
       <Footer />
     </Container>
   );
