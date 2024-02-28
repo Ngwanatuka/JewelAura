@@ -1,21 +1,18 @@
-import Product from "./pages/Product";
-import Home from "./pages/Home";
-import ProductList from "./pages/ProductList";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
 import Cart from "./pages/Cart";
 import { StyleSheetManager } from "styled-components";
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+
+const clientID = import.meta.env.VITE_PAYPAL_CLIENT_ID;
 
 export const App = () => {
   return (
-    <StyleSheetManager shouldForwardProp={(prop) => prop !== 'slideIndex' && prop !== 'bg'}>
-      {/* <Home /> */}
-      {/* <Product /> */}
-      {/* <ProductList /> */}
-      {/* <Register /> */}
-      {/* <Login /> */}
-      <Cart />
-    </StyleSheetManager>
+    <PayPalScriptProvider options={{ "client-id": clientID }}>
+      <StyleSheetManager
+        shouldForwardProp={(prop) => prop !== "slideIndex" && prop !== "bg"}
+      >
+        <Cart />
+      </StyleSheetManager>
+    </PayPalScriptProvider>
   );
 };
 
