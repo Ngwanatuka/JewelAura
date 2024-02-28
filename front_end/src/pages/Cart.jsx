@@ -4,6 +4,8 @@ import Footer from "../components/Footer";
 import Announcements from "../components/Announcements";
 import { Add, Remove } from "@material-ui/icons";
 import { mobile } from "../responsive";
+import PayPalButton from "../components/PayPalButtons";
+// import { useState } from "react";
 
 const Container = styled.div``;
 
@@ -35,7 +37,8 @@ const TopButton = styled.button`
 `;
 
 const TopText = styled.span`
-${mobile({ display: "none" })}`;
+  ${mobile({ display: "none" })}
+`;
 
 const TopTexts = styled.div`
   text-decoration: underline;
@@ -52,14 +55,12 @@ const Bottom = styled.div`
 
 const Info = styled.div`
   flex: 3;
-
 `;
 
 const Product = styled.div`
   display: flex;
   justify-content: space-between;
   ${mobile({ flexDirection: "column" })}
-
 `;
 
 const ProductDetail = styled.div`
@@ -157,6 +158,10 @@ const Button = styled.button`
   font-weight: 600;
 `;
 const Cart = () => {
+  // const [showPayPal, setShowPayPal] = useState(false);
+  // const handleClick = () => {
+  //   setShowPayPal(true);
+  // };
   return (
     <Container>
       <Announcements />
@@ -247,6 +252,7 @@ const Cart = () => {
           </Summary>
         </Bottom>
       </Wrapper>
+      <PayPalButton />
       <Footer />
     </Container>
   );
