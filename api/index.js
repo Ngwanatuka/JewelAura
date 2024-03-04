@@ -1,3 +1,4 @@
+import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
@@ -13,11 +14,15 @@ dotenv.config();
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.log("Error: ", err));
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
+    process.exit(1);
+  });
 
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 app.get("/api/test", () => {
   console.log("Test API");
