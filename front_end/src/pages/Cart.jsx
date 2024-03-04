@@ -167,6 +167,7 @@ const Cart = () => {
   const handleClick = () => {
     setShowPayPal(true);
   };
+  console.log(handleClick);
   return (
     <Container>
       <Announcements />
