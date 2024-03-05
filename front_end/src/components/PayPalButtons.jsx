@@ -12,8 +12,8 @@ const Message = ({ content }) => {
   );
 };
 
-const clientID = import.meta.env;
-console.log(clientID);
+const clientID = import.meta.env.VITE_PAYPAL_CLIENT_ID;
+
 
 const PaypalButton = () => {
   const initialOptions = {
