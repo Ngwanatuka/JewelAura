@@ -167,7 +167,7 @@ app.post("/api/orders/:orderID/capture", async (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.sendFile(path.resolve("./front_end/build/index.html"));
+  res.sendFile(path.resolve("./front_end/dist/index.html"));
 })
 
 app.listen(process.env.PORT || 8000, () => {
