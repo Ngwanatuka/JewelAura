@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
-const clientID = import.meta.env.VITE_PAYPAL_CLIENT_ID;
+
 
 const Message = ({ content }) => {
   return (
@@ -11,6 +11,9 @@ const Message = ({ content }) => {
     </div>
   );
 };
+
+const clientID = import.meta.env;
+console.log(clientID);
 
 const PaypalButton = () => {
   const initialOptions = {
