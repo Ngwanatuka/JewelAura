@@ -1,16 +1,16 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-// import PayNowButton from "./components/PayNowButton";
+import Pay from "../pages/Pay";
 import Success from "../pages/Success";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-function App() {
+const App = () => {
   return (
     <Router>
       <Routes>
-        {/* <Route path="/" exact component={PayNowButton} /> */}
-        <Route path="/success" exact component={Success} />
+        <Route path="/pay" element={<Pay />} />
+        <Route path="/success" element={<Success />} />
       </Routes>
     </Router>
   );
-}
+};
 
 export default App;
