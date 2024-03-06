@@ -34,7 +34,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/carts", cartRoutes);
 app.use("/api/orders", orderRoutes);
-app.use("/api/payment", paymentRoutes);
+app.use("/api/checkout/payment", paymentRoutes);
 
 app.listen(process.env.PORT || 8000, () => {
   console.log("Server is running");
