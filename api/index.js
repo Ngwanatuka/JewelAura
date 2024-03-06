@@ -22,7 +22,6 @@ mongoose
 
 const app = express();
 
-app.use(express.static("front_end/dist"))
 
 app.use(express.json());
 app.use(cors());
