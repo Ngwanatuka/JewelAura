@@ -13,7 +13,7 @@ import { StyleSheetManager } from "styled-components";
 
 export const App = () => {
   
-  const user = true
+  const user = true;
 
   const router = createBrowserRouter([
     {
