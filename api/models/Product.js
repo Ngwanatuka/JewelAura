@@ -20,14 +20,18 @@ const ProducSchema = new mongoose.Schema(
       type: Array,
     },
     size: {
-      type: String,
+      type: Array,
     },
     color: {
-      type: String,
+      type: Array,
     },
     price: {
       type: Number,
       required: true,
+    },
+    inStock: {
+      type: Boolean,
+      default: true,
     },
   },
   { timestamps: true }
