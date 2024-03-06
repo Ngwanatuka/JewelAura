@@ -1,12 +1,12 @@
 import StripeCheckout from "react-stripe-checkout";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 const Pay = () => {
   const [stripeToken, setStripeToken] = useState(null);
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const onToken = (token) => {
     setStripeToken(token);
@@ -23,13 +23,13 @@ const Pay = () => {
           }
         );
         console.log(res.data);
-        history.push("/success");
+        navigate("/success");
       } catch (error) {
         console.log(error);
       }
     };
     stripeToken && makeRequest();
-  }, [stripeToken, history]);
+  }, [stripeToken, navigate]);
   return (
     <div
       style={{
