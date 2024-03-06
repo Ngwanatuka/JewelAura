@@ -1,7 +1,7 @@
 import StripeCheckout from "react-stripe-checkout";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useHistory } from "react-router-dom";
+import { useHistory } from "react-router";
 
 const Pay = () => {
   const [stripeToken, setStripeToken] = useState(null);
