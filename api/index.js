@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.js";
 import productRoutes from "./routes/product.js";
 import cartRoutes from "./routes/cart.js";
 import orderRoutes from "./routes/order.js";
+import stripeRoutes from "./routes/stripe.js";
 
 dotenv.config();
 
@@ -19,9 +20,7 @@ mongoose
     process.exit(1);
   });
 
-
 const app = express();
-
 
 app.use(express.json());
 app.use(cors());
@@ -35,9 +34,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/carts", cartRoutes);
 app.use("/api/orders", orderRoutes);
-
-
-
+app.use("/api/checkout", stripeRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log("Server is running ");
