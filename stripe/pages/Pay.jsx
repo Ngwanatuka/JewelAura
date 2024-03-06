@@ -14,7 +14,7 @@ const Pay = () => {
   useEffect(() => {
     const makeRequest = async () => {
       try {
-        const res = await axios.post("http://localhost:5000/checkout/payment", {
+        const res = await axios.post("http://localhost:5000/api/checkout/payment", {
             tokenId: stripeToken.id,
             amount: 1500,
         });
