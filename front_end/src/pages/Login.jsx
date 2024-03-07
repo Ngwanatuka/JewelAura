@@ -52,6 +52,11 @@ const Button = styled.button`
   color: white;
   cursor: pointer;
   margin-bottom: 10px;
+  &:disabled {
+    background-color: #9e9e9e;
+    cursor: not-allowed;
+  
+  }
 `;
 
 const Link = styled.a`
@@ -63,6 +68,8 @@ const Link = styled.a`
 
 const Error = styled.span`
   color: red;
+  margin: 10px 0;
+  font-size: 14px;
 `;
 
 const Login = () => {
