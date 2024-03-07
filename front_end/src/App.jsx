@@ -9,10 +9,10 @@ import ProductList from "./pages/ProductList";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Cart from "./pages/Cart";
+import Success from "./pages/Success";
 import { StyleSheetManager } from "styled-components";
 
 export const App = () => {
-  
   const user = true;
 
   const router = createBrowserRouter([
@@ -29,20 +29,22 @@ export const App = () => {
       element: <Product />,
     },
     {
+      path: "/success",
+      element: <Success />,
+    },
+    {
       path: "/cart",
-      element:  <Cart />,
+      element: <Cart />,
     },
     {
       path: "/register",
-      element: user ? <Navigate to='/'/> : <Register />,
+      element: user ? <Navigate to="/" /> : <Register />,
     },
     {
       path: "/login",
-      element: user ? <Navigate to='/'/> : <Login />,
+      element: user ? <Navigate to="/" /> : <Login />,
     },
-   
   ]);
-
 
   return (
     <StyleSheetManager
