@@ -22,7 +22,7 @@ export const App = () => {
       element: <Home />,
     },
     {
-      path: "/products/:category",
+      path: "/products",
       element: <ProductList />,
     },
     {

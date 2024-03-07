@@ -76,12 +76,12 @@ const Product = ({ item }) => {
       <Image src={item.img} />
       <Info>
         <Icon>
-        <Link to={`/product/${item._id}`}>
           <ShoppingCartOutlined />
-        </Link>
         </Icon>
         <Icon>
-          <SearchOutlined />
+          <Link to={`/product/${item._id}`} style={{color: "black"}}>
+            <SearchOutlined />
+          </Link>
         </Icon>
         <Icon>
           <FavoriteBorderOutlined />

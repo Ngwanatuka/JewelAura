@@ -2,8 +2,10 @@ import styled from "styled-components";
 import { Search, ShoppingCartOutlined } from "@material-ui/icons";
 import { Badge } from "@mui/material";
 import { mobile } from "../responsive";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { logout } from "../redux/userRedux";
+
 
 const Container = styled.div`
   height: 70px;
@@ -53,6 +55,7 @@ const Center = styled.div`
 const Logo = styled.h1`
   font-weight: 500;
   ${mobile({ fontSize: "15px" })}
+
 `;
 
 const Right = styled.div`
@@ -70,8 +73,15 @@ const MenuItem = styled.div`
   ${mobile({ fontSize: "12px", marginLeft: "10px" })}
 `;
 
+
+
 const Navbar = () => {
   const quantity = useSelector((state) => state.cart.quantity);
+  const dispatch = useDispatch();
+  
+  const handleLogout = () => {
+    dispatch(logout());
+  };
 
   return (
     <Container>
@@ -84,12 +94,14 @@ const Navbar = () => {
           </SearchContainer>
         </Left>
         <Center>
+        <Link to={"/"} style={{textDecoration: "none", color: "black"}}>
           <Logo>Glittering Rock Jewells</Logo>
+        </Link>
         </Center>
         <Right>
-          <MenuItem>Register</MenuItem>
-          <MenuItem>Sign In</MenuItem>
-          <Link to="/cart">
+          <MenuItem onClick={handleLogout}>Signout</MenuItem>
+          
+          <Link to="/cart" style={{color: "black"}}>
             <MenuItem>
               <Badge badgeContent={quantity} color="primary">
                 <ShoppingCartOutlined />

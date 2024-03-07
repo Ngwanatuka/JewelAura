@@ -9,6 +9,13 @@ import StripeCheckout from "react-stripe-checkout";
 import { useEffect, useState } from "react";
 import { userRequest } from "../requestMethods";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import {
+  decreaseQuantity,
+  increaseQuantity,
+  removeItem,
+} from "../redux/cartRedux";
+import { Link } from "react-router-dom";
 
 const stripeKey = import.meta.env.VITE_STRIPE_KEY;
 
@@ -41,9 +48,9 @@ const TopButton = styled.button`
   color: ${(props) => props.type === "filled" && "white"};
 `;
 
-const TopText = styled.span`
-  ${mobile({ display: "none" })}
-`;
+// const TopText = styled.span`
+//   ${mobile({ display: "none" })}
+// `;
 
 const TopTexts = styled.div`
   text-decoration: underline;
@@ -166,6 +173,25 @@ const Button = styled.button`
 const Cart = () => {
   const [stripeToken, setStripeToken] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleDecreaseQuantity = (productId) => {
+    const product = cart.products.find((product) => product._id === productId);
+
+    if (product && product.quantity > 1) {
+      dispatch(decreaseQuantity(productId));
+    } else if (product && product.quantity === 1) {
+      handleRemoveItem(productId);
+    }
+  };
+
+  const handleIncreaseQuantity = (productId) => {
+    dispatch(increaseQuantity(productId));
+  };
+
+  const handleRemoveItem = (productId) => {
+    dispatch(removeItem(productId));
+  };
 
   const cart = useSelector((state) => state.cart);
   const onToken = (token) => {
@@ -183,7 +209,7 @@ const Cart = () => {
         navigate("/success");
         console.log(res.data);
       } catch (err) {
-        console.log("error making the request:", err);
+        console.log("error making the request:");
       }
     };
     stripeToken && cart.total && makeRequest();
@@ -196,10 +222,12 @@ const Cart = () => {
       <Wrapper>
         <Title>Your Bag</Title>
         <Top>
-          <TopButton>CONTINUE SHOPPING</TopButton>
+          <Link to="/products">
+            <TopButton>CONTINUE SHOPPING</TopButton>
+          </Link>
           <TopTexts>
-            <TopText>Shopping Bag(2)</TopText>
-            <TopText>Your Wishlist (0)</TopText>
+            {/* <TopText>Shopping Bag(2)</TopText> */}
+            {/* <TopText>Your Wishlist (0)</TopText> */}
           </TopTexts>
           <TopButton type="filled">CHECKOUT NOW</TopButton>
         </Top>
@@ -224,10 +252,13 @@ const Cart = () => {
                 </ProductDetail>
                 <PriceDetail>
                   <ProductAmountContainer>
-                    <Add />
+                    <Remove
+                      onClick={() => handleDecreaseQuantity(product._id)}
+                    />
                     <ProductAmount>{product.quantity}</ProductAmount>
-                    <Remove />
+                    <Add onClick={() => handleIncreaseQuantity(product._id)} />
                   </ProductAmountContainer>
+
                   <ProductPrice>
                     $ {product.price * product.quantity}
                   </ProductPrice>
