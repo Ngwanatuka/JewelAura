@@ -13,7 +13,7 @@ import Success from "./pages/Success";
 import { StyleSheetManager } from "styled-components";
 
 export const App = () => {
-  const user = true;
+  const user = false;
 
   const router = createBrowserRouter([
     {
