@@ -183,7 +183,7 @@ const Cart = () => {
         navigate("/success");
         console.log(res.data);
       } catch (err) {
-        console.log(err);
+        console.log("error making the request:", err);
       }
     };
     stripeToken && cart.total && makeRequest();
