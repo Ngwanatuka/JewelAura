@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import StripeCheckout from "react-stripe-checkout";
 import { useEffect, useState } from "react";
 import { userRequest } from "../requestMethods";
+import { useNavigate } from "react-router-dom";
 
 const stripeKey = import.meta.env.VITE_STRIPE_KEY;
 
@@ -164,6 +165,7 @@ const Button = styled.button`
 
 const Cart = () => {
   const [stripeToken, setStripeToken] = useState(null);
+  const navigate = useNavigate();
 
   const cart = useSelector((state) => state.cart);
   const onToken = (token) => {
@@ -178,13 +180,14 @@ const Cart = () => {
           tokenId: stripeToken,
           amount: cart.total * 100,
         });
-
+        navigate("/success");
         console.log(res.data);
       } catch (err) {
         console.log(err);
       }
     };
-  }, [stripeToken]);
+    stripeToken && cart.total && makeRequest();
+  }, [stripeToken, cart.total, navigate]);
 
   return (
     <Container>
