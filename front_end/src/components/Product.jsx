@@ -1,11 +1,11 @@
 /* eslint-disable react/prop-types */
-import { Link } from "react-router-dom";
 import {
   FavoriteBorderOutlined,
   SearchOutlined,
   ShoppingCartOutlined,
 } from "@material-ui/icons";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 const Info = styled.div`
   width: 100%;
@@ -76,12 +76,12 @@ const Product = ({ item }) => {
       <Image src={item.img} />
       <Info>
         <Icon>
+        <Link to={`/product/${item._id}`}>
           <ShoppingCartOutlined />
+        </Link>
         </Icon>
         <Icon>
-        <Link to={`/product/${item._id}`}>
           <SearchOutlined />
-        </Link>
         </Icon>
         <Icon>
           <FavoriteBorderOutlined />

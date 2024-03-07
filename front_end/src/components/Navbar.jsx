@@ -2,11 +2,12 @@ import styled from "styled-components";
 import { Search, ShoppingCartOutlined } from "@material-ui/icons";
 import { Badge } from "@mui/material";
 import { mobile } from "../responsive";
+import { useSelector } from "react-redux";
 
 const Container = styled.div`
   height: 70px;
   background-color: #f0f0f0;
-  ${mobile({ height: "50px"})}
+  ${mobile({ height: "50px" })}
 `;
 
 const Wrapper = styled.div`
@@ -14,7 +15,7 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  ${mobile({ padding: "10px 0px"})}
+  ${mobile({ padding: "10px 0px" })}
 `;
 const Left = styled.div`
   display: flex;
@@ -25,7 +26,7 @@ const Left = styled.div`
 const Language = styled.span`
   cursor: pointer;
   font-size: 14px;
-  ${mobile({ display: "none"})}
+  ${mobile({ display: "none" })}
 `;
 
 const SearchContainer = styled.div`
@@ -34,13 +35,13 @@ const SearchContainer = styled.div`
   border: 1px solid lightgray;
   margin-left: 25px;
   padding: 5px;
-  ${mobile({ marginLeft: "10px"})}
+  ${mobile({ marginLeft: "10px" })}
 `;
 
 const Input = styled.input`
   border: none;
   background-color: transparent;
-  ${mobile({ width: "55px"})}
+  ${mobile({ width: "55px" })}
 `;
 
 const Center = styled.div`
@@ -50,7 +51,7 @@ const Center = styled.div`
 
 const Logo = styled.h1`
   font-weight: 500;
-  ${mobile({ fontSize: "15px"})}
+  ${mobile({ fontSize: "15px" })}
 `;
 
 const Right = styled.div`
@@ -58,25 +59,27 @@ const Right = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  ${mobile({ flex: 2, justifyContent: "center", textAlign: "center"})}
+  ${mobile({ flex: 2, justifyContent: "center", textAlign: "center" })}
 `;
 
 const MenuItem = styled.div`
   font-size: 14px;
   cursor: pointer;
   margin-left: 25px;
-  ${mobile({ fontSize: "12px", marginLeft: "10px"})}
+  ${mobile({ fontSize: "12px", marginLeft: "10px" })}
 `;
 
 const Navbar = () => {
+  const quantity = useSelector((state) => state.cart.quantity);
+
   return (
     <Container>
       <Wrapper>
         <Left>
           <Language>EN</Language>
           <SearchContainer>
-            <Input placeholder="Search"/>
-            <Search style={{color: "gray", fontSize: 16}}/>
+            <Input placeholder="Search" />
+            <Search style={{ color: "gray", fontSize: 16 }} />
           </SearchContainer>
         </Left>
         <Center>
@@ -86,7 +89,7 @@ const Navbar = () => {
           <MenuItem>Register</MenuItem>
           <MenuItem>Sign In</MenuItem>
           <MenuItem>
-            <Badge badgeContent={4} color="primary">
+            <Badge badgeContent={quantity} color="primary">
               <ShoppingCartOutlined />
             </Badge>
           </MenuItem>

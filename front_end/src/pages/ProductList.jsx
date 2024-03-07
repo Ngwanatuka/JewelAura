@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import Announcements from "../components/Announcements";
+import Announcement from "../components/Announcement";
 import Products from "../components/Products";
 import Newsletter from "../components/Newsletter";
 import { useLocation } from "react-router";
@@ -54,7 +54,7 @@ const ProductList = () => {
   
   return (
     <Container>
-      <Announcements />
+      <Announcement />
       <Navbar />
       <Tittle>{cat}</Tittle>
       <FilterContainer>
