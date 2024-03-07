@@ -11,9 +11,10 @@ import Login from "./pages/Login";
 import Cart from "./pages/Cart";
 import Success from "./pages/Success";
 import { StyleSheetManager } from "styled-components";
+import { useSelector } from "react-redux";
 
 export const App = () => {
-  const user = false;
+  const user = useSelector((state) => state.user.currentUser);
 
   const router = createBrowserRouter([
     {
