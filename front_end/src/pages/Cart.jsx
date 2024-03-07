@@ -6,7 +6,8 @@ import { Add, Remove } from "@material-ui/icons";
 import { mobile } from "../responsive";
 import { useSelector } from "react-redux";
 import StripeCheckout from "react-stripe-checkout";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { userRequest } from "../requestMethods";
 
 const stripeKey = import.meta.env.VITE_STRIPE_KEY;
 
@@ -169,6 +170,22 @@ const Cart = () => {
     setStripeToken(token);
   };
   console.log(stripeToken);
+
+  useEffect(() => {
+    const makeRequest = async () => {
+      try {
+        const res = await userRequest.post("/checkout/payment", {
+          tokenId: stripeToken,
+          amount: cart.total * 100,
+        });
+
+        console.log(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+  }, [stripeToken]);
+
   return (
     <Container>
       <Announcement />
