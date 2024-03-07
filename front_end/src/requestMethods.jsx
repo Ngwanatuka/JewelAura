@@ -3,7 +3,7 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:5000/api";
 
-const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZTljMmQxNTkzNGIzYTk2ZTdjMzgzNiIsImlzQWRtaW4iOnRydWUsImlhdCI6MTcwOTgxOTQwNywiZXhwIjoxNzEwMDc4NjA3fQ.c2Xs_nKtyG4cpZ1cpmQAUl8xpWWyADqpQPEmtULqGak"
+const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZTllYWEyMzU0ZmVmODlhNzJiNTYyNiIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3MDk4Mjg3NzksImV4cCI6MTcxMDA4Nzk3OX0.uj0kggFi6xKTVhYlcNGxeChd7hhZnoK7nnf4Q6s0QmM"
 
 export const publicRequest = axios.create({
   baseURL: BASE_URL,
