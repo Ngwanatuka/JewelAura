@@ -12,8 +12,6 @@ const Container = styled.div`
 `;
 
 const Products = ({ cat, filters, sort }) => {
-
-
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
 
@@ -62,9 +60,11 @@ const Products = ({ cat, filters, sort }) => {
 
   return (
     <Container>
-      {filteredProducts.map((item) => (
-        <Product item={item} key={item.id} />
-      ))}
+      {cat
+        ? filteredProducts.map((item) => <Product item={item} key={item.id} />)
+        : products
+            .slice(0, 8)
+            .map((item) => <Product item={item} key={item.id} />)}
     </Container>
   );
 };
