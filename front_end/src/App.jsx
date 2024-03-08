@@ -21,6 +21,8 @@ export const App = () => {
       path: "/",
       element: <Home />,
     },
+    { path: "/products", element: <ProductList /> },
+
     {
       path: "/products/:category",
       element: <ProductList />,

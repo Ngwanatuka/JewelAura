@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import Announcement from "../components/Announcement";
+import Announcements from "../components/Announcement";
 import Products from "../components/Products";
 import Newsletter from "../components/Newsletter";
 import { useLocation } from "react-router";
@@ -54,7 +54,7 @@ const ProductList = () => {
   
   return (
     <Container>
-      <Announcement />
+      <Announcements />
       <Navbar />
       <Tittle>{cat}</Tittle>
       <FilterContainer>
@@ -62,12 +62,12 @@ const ProductList = () => {
           <FilterText>Filter Products:</FilterText>
           <Select name="color" onChange={handleFilters}>
             <Option disabled>Color</Option>
-            <Option value="white">White</Option>
-            <Option value="black">Black</Option>
-            <Option value="red">Red</Option>
-            <Option value="blue">Blue</Option>
-            <Option value="yellow">Yellow</Option>
-            <Option value="green">Green</Option>
+            <Option value="Gold">Gold</Option>
+            <Option value="Black">Black</Option>
+            <Option value="Silver">Silver</Option>
+            <Option value="Green">Green</Option>
+            <Option value="Yellow">Yellow</Option>
+           
           </Select>
           <Select name="size" onChange={handleFilters}> 
             <Option disabled>Size</Option>
