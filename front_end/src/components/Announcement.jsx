@@ -10,8 +10,8 @@ const Container = styled.div`
   font-size: 14px;
 `;
 
-const Announcements = () => {
+const Announcement = () => {
   return <Container>More Deals to come...</Container>;
 };
 
-export default Announcements;
+export default Announcement;

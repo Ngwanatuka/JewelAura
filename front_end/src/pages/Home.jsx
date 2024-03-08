@@ -1,4 +1,4 @@
-import Announcements from "../components/Announcements";
+import Announcement from "../components/Announcement";
 import Navbar from "../components/Navbar";
 import styled from "styled-components";
 import Slider from "../components/Slider";
@@ -12,7 +12,7 @@ const Container = styled.div``;
 const Home = () => {
   return (
     <Container>
-      <Announcements />
+      <Announcement />
       <Navbar />
       <Slider />
       <Categories />

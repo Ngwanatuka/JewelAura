@@ -1,9 +1,23 @@
 import styled from "styled-components";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import Announcements from "../components/Announcements";
+import Announcement from "../components/Announcement";
 import { Add, Remove } from "@material-ui/icons";
 import { mobile } from "../responsive";
+import { useSelector } from "react-redux";
+import StripeCheckout from "react-stripe-checkout";
+import { useEffect, useState } from "react";
+import { userRequest } from "../requestMethods";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import {
+  decreaseQuantity,
+  increaseQuantity,
+  removeItem,
+} from "../redux/cartRedux";
+import { Link } from "react-router-dom";
+
+const stripeKey = import.meta.env.VITE_STRIPE_KEY;
 
 const Container = styled.div``;
 
@@ -34,9 +48,9 @@ const TopButton = styled.button`
   color: ${(props) => props.type === "filled" && "white"};
 `;
 
-const TopText = styled.span`
-  ${mobile({ display: "none" })}
-`;
+// const TopText = styled.span`
+//   ${mobile({ display: "none" })}
+// `;
 
 const TopTexts = styled.div`
   text-decoration: underline;
@@ -157,93 +171,132 @@ const Button = styled.button`
 `;
 
 const Cart = () => {
+  const [stripeToken, setStripeToken] = useState(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleDecreaseQuantity = (productId) => {
+    const product = cart.products.find((product) => product._id === productId);
+
+    if (product && product.quantity > 1) {
+      dispatch(decreaseQuantity(productId));
+    } else if (product && product.quantity === 1) {
+      handleRemoveItem(productId);
+    }
+  };
+
+  const handleIncreaseQuantity = (productId) => {
+    dispatch(increaseQuantity(productId));
+  };
+
+  const handleRemoveItem = (productId) => {
+    dispatch(removeItem(productId));
+  };
+
+  const cart = useSelector((state) => state.cart);
+  const onToken = (token) => {
+    setStripeToken(token);
+  };
+  console.log(stripeToken);
+
+  useEffect(() => {
+    const makeRequest = async () => {
+      try {
+        const res = await userRequest.post("/checkout/payment", {
+          tokenId: stripeToken.id,
+          amount: cart.total * 100,
+        });
+        navigate("/success");
+        console.log(res.data);
+      } catch (err) {
+        console.log("error making the request:");
+      }
+    };
+    stripeToken && cart.total && makeRequest();
+  }, [stripeToken, cart.total, navigate]);
+
   return (
     <Container>
-      <Announcements />
+      <Announcement />
       <Navbar />
       <Wrapper>
         <Title>Your Bag</Title>
         <Top>
-          <TopButton>CONTINUE SHOPPING</TopButton>
+          <Link to="/products">
+            <TopButton>CONTINUE SHOPPING</TopButton>
+          </Link>
           <TopTexts>
-            <TopText>Shopping Bag(2)</TopText>
-            <TopText>Your Wishlist (0)</TopText>
+            {/* <TopText>Shopping Bag(2)</TopText> */}
+            {/* <TopText>Your Wishlist (0)</TopText> */}
           </TopTexts>
           <TopButton type="filled">CHECKOUT NOW</TopButton>
         </Top>
         <Bottom>
           <Info>
-            <Product>
-              <ProductDetail>
-                <Image src="https://images.pexels.com/photos/1670723/pexels-photo-1670723.jpeg?auto=compress&cs=tinysrgb&w=600" />
-                <Details>
-                  <ProductName>
-                    <b>Product:</b> Gold ring
-                  </ProductName>
-                  <ProductId>
-                    <b>ID:</b> 93813718293
-                  </ProductId>
-                  <ProductColor color="Gold" />
-                  <ProductSize>
-                    <b>Size:</b> 17
-                  </ProductSize>
-                </Details>
-              </ProductDetail>
-              <PriceDetail>
-                <ProductAmountContainer>
-                  <Add />
-                  <ProductAmount>2</ProductAmount>
-                  <Remove />
-                </ProductAmountContainer>
-                <ProductPrice>R 30</ProductPrice>
-              </PriceDetail>
-            </Product>
+            {cart.products.map((product) => (
+              <Product key={product._id}>
+                <ProductDetail>
+                  <Image src={product.img} />
+                  <Details>
+                    <ProductName>
+                      <b>Product:</b> {product.title}
+                    </ProductName>
+                    <ProductId>
+                      <b>ID:</b> {product._id}
+                    </ProductId>
+                    <ProductColor color={product.color} />
+                    <ProductSize>
+                      <b>Size:</b> {product.size}
+                    </ProductSize>
+                  </Details>
+                </ProductDetail>
+                <PriceDetail>
+                  <ProductAmountContainer>
+                    <Remove
+                      onClick={() => handleDecreaseQuantity(product._id)}
+                    />
+                    <ProductAmount>{product.quantity}</ProductAmount>
+                    <Add onClick={() => handleIncreaseQuantity(product._id)} />
+                  </ProductAmountContainer>
+
+                  <ProductPrice>
+                    $ {product.price * product.quantity}
+                  </ProductPrice>
+                </PriceDetail>
+              </Product>
+            ))}
             <Hr />
-            <Product>
-              <ProductDetail>
-                <Image src="https://images.pexels.com/photos/2735970/pexels-photo-2735970.jpeg?auto=compress&cs=tinysrgb&w=600" />
-                <Details>
-                  <ProductName>
-                    <b>Product:</b> Ear studs
-                  </ProductName>
-                  <ProductId>
-                    <b>ID:</b> 93813718293
-                  </ProductId>
-                  <ProductColor color="silver" />
-                  <ProductSize>
-                    <b>Size:</b> 3
-                  </ProductSize>
-                </Details>
-              </ProductDetail>
-              <PriceDetail>
-                <ProductAmountContainer>
-                  <Add />
-                  <ProductAmount>1</ProductAmount>
-                  <Remove />
-                </ProductAmountContainer>
-                <ProductPrice>R 20</ProductPrice>
-              </PriceDetail>
-            </Product>
           </Info>
           <Summary>
             <SummaryTitle>ORDER SUMMARY</SummaryTitle>
             <SummaryItem>
               <SummaryItemText>Subtotal</SummaryItemText>
-              <SummaryItemPrice>R 80</SummaryItemPrice>
+              <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem>
               <SummaryItemText>Estimated Shipping</SummaryItemText>
-              <SummaryItemPrice>R 5.90</SummaryItemPrice>
+              <SummaryItemPrice>$ 5.90</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem>
               <SummaryItemText>Shipping Discount</SummaryItemText>
-              <SummaryItemPrice>R -5.90</SummaryItemPrice>
+              <SummaryItemPrice>$ -5.90</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem type="total">
               <SummaryItemText>Total</SummaryItemText>
-              <SummaryItemPrice>R 80</SummaryItemPrice>
+              <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
             </SummaryItem>
-            <Button>CHECKOUT NOW</Button>
+            <StripeCheckout
+              name="Glittering Rock Jewells"
+              // image=""
+              billingAddress
+              shippingAddress
+              description={`Your total is $${cart.total}`}
+              amount={cart.total * 100}
+              token={onToken}
+              stripeKey={stripeKey}
+            >
+              <Button>CHECKOUT NOW</Button>
+            </StripeCheckout>
           </Summary>
         </Bottom>
       </Wrapper>

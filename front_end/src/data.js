@@ -29,19 +29,19 @@ const categories = [
     id: 1,
     img: "https://images.pexels.com/photos/3634366/pexels-photo-3634366.jpeg?auto=compress&cs=tinysrgb&w=600",
     title: "WRIST WEAR",
-    cat: "wristwear",
+    cat: "Wrist wear",
   },
   {
     id: 2,
     img: "https://images.pexels.com/photos/4960230/pexels-photo-4960230.jpeg?auto=compress&cs=tinysrgb&w=600",
     title: "NECKLACES",
-    cat: "necklaces",
+    cat: "Necklaces",
   },
   {
     id: 3,
     img: "https://images.pexels.com/photos/5157291/pexels-photo-5157291.jpeg?auto=compress&cs=tinysrgb&w=600",
     title: "FINGER RINGS",
-    cat: "rings",
+    cat: "Finger rings",
   },
 ];
 
