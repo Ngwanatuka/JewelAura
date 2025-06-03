@@ -23,12 +23,13 @@ mongoose
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+
+// Allow cross-origin requests
+app.use(cors({ origin: "http://localhost:3000" }));
 
 app.get("/api/test", (req, res) => {
   res.send("Test successful");
 });
-
 
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
