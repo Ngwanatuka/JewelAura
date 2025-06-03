@@ -25,9 +25,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.get("/api/test", () => {
-  console.log("Test API");
+app.get("/api/test", (req, res) => {
+  res.send("Test successful");
 });
+
 
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
@@ -36,6 +37,6 @@ app.use("/api/carts", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/checkout", stripeRoute);
 
-app.listen(process.env.PORT || 8000, () => {
-  console.log("Server is running on port 8000");
+app.listen(process.env.PORT || 5000, () => {
+  console.log("Server is running on port 5000");
 });
