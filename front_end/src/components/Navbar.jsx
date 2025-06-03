@@ -91,7 +91,7 @@ const Navbar = () => {
         </Left>
         <Center>
           <Link to={"/"} style={{ textDecoration: "none", color: "black" }}>
-            <Logo>Glittering Rock Jewells</Logo>
+            <Logo>JewelAura</Logo>
           </Link>
         </Center>
         <Right>
