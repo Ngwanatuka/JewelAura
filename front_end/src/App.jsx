@@ -19,7 +19,7 @@ export const App = () => {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Home />,
+      element: user ? <Home /> : <Navigate to="/login" />,
     },
     { path: "/products", element: <ProductList /> },
 
