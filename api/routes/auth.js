@@ -7,21 +7,35 @@ const router = Router();
 
 // Register
 router.post("/register", async (req, res) => {
-  const newUser = new User({
-    username: req.body.username,
-    email: req.body.email,
-    password: CryptoJS.AES.encrypt(
-      req.body.password,
-      process.env.PASS_SEC
-    ).toString(),
-  });
+  const { username, email, password } = req.body;
 
+  // Check if the user already exists
   try {
+    const existingUser = await User.findOne({ email: email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists.' });
+    }
+
+    // Encrypt the password
+    const encryptedPassword = CryptoJS.AES.encrypt(password, process.env.PASS_SEC).toString();
+
+    // Create a new user
+    const newUser = new User({
+      username,
+      email,
+      password: encryptedPassword
+    });
+
+    // Save user to database
     const savedUser = await newUser.save();
 
-    res.status(201).json(savedUser);
+    // Remove sensitive information before sending response
+    const { password: _, ...userWithoutPassword } = savedUser._doc;
+
+    res.status(201).json(userWithoutPassword);
   } catch (err) {
-    res.status(500).json(err);
+    console.error("Error during registration:", err);
+    res.status(500).json({ message: 'Internal server error', error: err });
   }
 });
 
