@@ -3,14 +3,25 @@ import Product from "./Product";
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { mobile } from "../responsive";
 
 const Container = styled.div`
+  width: 90vw;
+  margin: 0 auto;
   padding: 20px;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: center;
+  ${mobile({ width: "100vw", padding: "10px" })}
 `;
 
+/**
+ * Component that renders a list of products based on the category, filters and sort criteria specified in the props.
+ *
+ * @param {string} cat - The category of products to be rendered.
+ * @param {Object} filters - A dictionary of filters to be applied to the products.
+ * @param {string} sort - The criteria to sort the products by.
+ */
 const Products = ({ cat, filters, sort }) => {
 
   console.log(cat, filters, sort);
