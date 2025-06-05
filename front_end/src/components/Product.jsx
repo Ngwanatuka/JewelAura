@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+// Product.jsx
 import {
   FavoriteBorderOutlined,
   SearchOutlined,
@@ -24,15 +24,17 @@ const Info = styled.div`
 `;
 
 const Container = styled.div`
-  flex: 1;
+  flex: 1 0 280px;
   margin: 5px;
   min-width: 280px;
+  max-width: 320px;
   height: 350px;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #f5fafd;
   position: relative;
+  border-radius: 10px;
   &:hover ${Info} {
     opacity: 1;
   }
@@ -69,6 +71,17 @@ const Icon = styled.div`
   }
 `;
 
+/**
+ * A Product component, which displays a product item in a list,
+ * along with its image, and three icons: a shopping cart, a search
+ * icon, and a favorite border icon.
+ *
+ * @param {Object} item - The product item to be displayed.
+ * @param {string} item.img - The image of the product.
+ * @param {string} item._id - The id of the product.
+ *
+ * @returns {React.ReactElement} - The Product component.
+ */
 const Product = ({ item }) => {
   return (
     <Container>
