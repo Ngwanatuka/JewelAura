@@ -3,13 +3,16 @@ import styled from "styled-components";
 import { mobile } from "../responsive";
 
 const Container = styled.div`
-  height: 60vh;
+  width: 90vw;
+  height: 40vh; // keep this or make 90vh to match the others exactly
+  margin: 0 auto;
   background-color: #fcf5f5;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-
+  border-radius: 10px;
+  ${mobile({ width: "100vw", height: "auto" })}
 `;
 
 const Title = styled.h1`
@@ -31,6 +34,7 @@ const InputContainer = styled.div`
   display: flex;
   justify-content: space-between;
   border: 1px solid lightgray;
+  border-radius: 5px;
   ${mobile({ width: "80%" })}
 `;
 
@@ -38,6 +42,18 @@ const Input = styled.input`
   border: none;
   flex: 8;
   padding-left: 20px;
+  padding: 12px;
+  
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  &:hover {
+    border-color: #888;
+    box-shadow: 0 0 5px rgb(110, 152, 152);
+  }
+  &:focus {
+    outline: none;
+    border-color: teal;
+  }
 `;
 
 const Button = styled.button`
@@ -48,8 +64,22 @@ const Button = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  &:hover {
+    background-color: #888;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  }
 `;
 
+
+
+
+/**
+ * Newsletter component. It displays a newsletter form with a title, description, input field and send button.
+ * @returns {JSX.Element} The newsletter component.
+ */
 const Newsletter = () => {
   return (
     <Container>
