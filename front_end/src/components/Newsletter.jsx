@@ -4,7 +4,7 @@ import { mobile } from "../responsive";
 
 const Container = styled.div`
   width: 90vw;
-  height: 40vh; // keep this or make 90vh to match the others exactly
+  height: 40vh;
   margin: 0 auto;
   background-color: #fcf5f5;
   display: flex;
