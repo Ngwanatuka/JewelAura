@@ -11,9 +11,13 @@ import { publicRequest } from "../requestMethods";
 import { addProduct } from "../redux/cartRedux";
 import { useDispatch } from "react-redux";
 
-const Container = styled.div``;
+const Container = styled.div`
+
+`;
 
 const Wrapper = styled.div`
+  width: 90vw;
+  margin: 0 auto;
   padding: 50px;
   display: flex;
   ${mobile({ padding: "10px", flexDirection: "column" })}
@@ -24,8 +28,8 @@ const ImgContainer = styled.div`
 `;
 
 const Image = styled.img`
-  width: 100%;
-  height: 90vh;
+  width: 50vw;
+  height: 50vh;
   object-fit: cover;
   ${mobile({ height: "40vh" })}
 `;
@@ -102,7 +106,7 @@ const Amount = styled.span`
   width: 30px;
   height: 30px;
   border-radius: 10px;
-  border: 1px solid teal;
+  border: 1px solid black;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -111,16 +115,31 @@ const Amount = styled.span`
 
 const Button = styled.button`
   padding: 15px;
-  border: 2px solid teal;
+  border: 2px solid black;
   background-color: white;
   cursor: pointer;
   font-weight: 500;
-
+  border-radius: 5px;
+  
   &:hover {
-    background-color: #f8f4f4;
+    background-color: teal;
+    color: white;
+    border: none;
   }
 `;
 
+
+/**
+ * A Product component, which displays the product page.
+ *
+ * @returns {React.ReactElement} - The Product component.
+ *
+ * The Product component displays the product page, which includes the product image,
+ * title, description, price, color, and size. It also includes a quantity selector and
+ * a button to add the product to the cart. The quantity selector increases or decreases
+ * the quantity of the product by one when the user clicks the + or - button. The button
+ * adds the product to the cart when the user clicks it.
+ */
 const Product = () => {
   const location = useLocation();
   const id = location.pathname.split("/")[2];
