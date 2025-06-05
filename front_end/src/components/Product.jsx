@@ -35,8 +35,17 @@ const Container = styled.div`
   background-color: #f5fafd;
   position: relative;
   border-radius: 10px;
+
   &:hover ${Info} {
     opacity: 1;
+    border-radius: 10px;
+    transform: translateY(-5px);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  &:hover ${Circle} {
+    background-color: #e9f5f5;
+    transition: all 0.5s ease;
   }
 `;
 
@@ -48,10 +57,11 @@ const Circle = styled.div`
 `;
 
 const Image = styled.img`
-  width: 75%;
-  height: 75%;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   z-index: 2;
+  border-radius: 10px;
 `;
 
 const Icon = styled.div`
