@@ -42,10 +42,17 @@ const TopButton = styled.button`
   padding: 10px;
   font-weight: 600;
   cursor: pointer;
+  border-radius: 5px;
   border: ${(props) => props.type === "filled" && "none"};
   background-color: ${(props) =>
-    props.type === "filled" ? "black" : "transparent"};
+    props.type === "filled" ? "teal" : "transparent"};
   color: ${(props) => props.type === "filled" && "white"};
+  &:hover {
+    background-color: ${(props) =>
+      props.type === "filled" ? "rgb(110, 152, 152)" : "teal"};
+    color: ${(props) => props.type === "filled" && "white"};
+    border: ${(props) => props.type === "filled" && "none"};
+  }
 `;
 
 // const TopText = styled.span`
@@ -165,15 +172,37 @@ const SummaryItemPrice = styled.span``;
 const Button = styled.button`
   width: 100%;
   padding: 10px;
-  background-color: black;
+  background-color: teal;
   color: white;
   font-weight: 600;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  &:hover {
+    background-color: rgb(110, 152, 152);
+  }
 `;
 
+/**
+ * The Cart component, which displays the cart page.
+ *
+ * The Cart component displays the cart page, which includes the items in the cart,
+ * the subtotal, estimated shipping, shipping discount, and total. It also includes
+ * a button to checkout using Stripe.
+ *
+ * @returns {React.ReactElement} - The Cart component.
+ */
 const Cart = () => {
   const [stripeToken, setStripeToken] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+/**
+ * Decreases the quantity of a product in the cart by one if the quantity is greater than one.
+ * If the quantity is one, removes the product from the cart.
+ *
+ * @param {string} productId - The ID of the product whose quantity is to be decreased.
+ */
 
   const handleDecreaseQuantity = (productId) => {
     const product = cart.products.find((product) => product._id === productId);
@@ -185,21 +214,45 @@ const Cart = () => {
     }
   };
 
+/**
+ * Increases the quantity of an item in the cart by one based on the given productId.
+ *
+ * @param {string} productId - The ID of the product to increase the quantity of in the cart.
+ */
   const handleIncreaseQuantity = (productId) => {
     dispatch(increaseQuantity(productId));
   };
+
+/**
+ * Removes an item from the cart based on the given productId.
+ *
+ * @param {string} productId - The ID of the product to be removed from the cart.
+ */
 
   const handleRemoveItem = (productId) => {
     dispatch(removeItem(productId));
   };
 
   const cart = useSelector((state) => state.cart);
+/**
+ * Callback function for when Stripe returns a token after
+ * a charge card request. Stores the token in the state
+ * for later use in the payment request to the server.
+ *
+ * @param {Object} token Stripe token object
+ */
   const onToken = (token) => {
     setStripeToken(token);
   };
   console.log(stripeToken);
 
   useEffect(() => {
+/**
+ * Make a request to the server to process the payment using the Stripe
+ * token and the total amount of the cart.
+ *
+ * @returns {Promise<void>}
+ */
     const makeRequest = async () => {
       try {
         const res = await userRequest.post("/checkout/payment", {
