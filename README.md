@@ -1,4 +1,4 @@
-# Glittering Rock Jewelles - E-commerce Project
+# JewelAura - E-commerce Project
 
 Welcome to Glittering Rock Jewelles, an e-commerce project that combines a sleek React.js front end with a robust Express.js backend. This project allows users to browse and purchase stunning jewelry while utilizing modern technologies such as Stripe for payment processing, Redux for state management, and Axios for efficient API calls.
 

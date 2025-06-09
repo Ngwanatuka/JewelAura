@@ -11,8 +11,10 @@ import styled from "styled-components";
 import { mobile } from "../responsive";
 
 const Container = styled.div`
+  width: 90vw;
+  margin: 0 auto;
   display: flex;
-  ${mobile({ flexDirection: "column" })}
+  ${mobile({ width: "100vw", height: "auto", flexDirection: "column" })}
 `;
 
 const Left = styled.div`
