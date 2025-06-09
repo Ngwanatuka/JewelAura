@@ -1,19 +1,19 @@
-import cors from "cors";
-import express from "express";
-import mongoose from "mongoose";
-import dotenv from "dotenv";
-import userRoutes from "./routes/user.js";
-import authRoutes from "./routes/auth.js";
-import productRoutes from "./routes/product.js";
-import cartRoutes from "./routes/cart.js";
-import orderRoutes from "./routes/order.js";
-import stripeRoute from "./routes/stripe.js";
+import express from 'express';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import multer from 'multer';
+import userRoutes from './routes/user.js';
+import authRoutes from './routes/auth.js';
+import productRoutes from './routes/product.js';
+import cartRoutes from './routes/cart.js';
+import orderRoutes from './routes/order.js';
+import stripeRoute from './routes/stripe.js';
 
 dotenv.config();
 
-// Connect to MongoDB
-mongoose
-  .connect(process.env.MONGO_URL)
+// MongoDB Connection
+mongoose.connect(process.env.MONGO_URL)
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => {
     console.error("MongoDB connection error:", err);
@@ -21,14 +21,30 @@ mongoose
   });
 
 const app = express();
-
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: "http://localhost:3000" }));
 
-app.get("/api/test", () => {
-  console.log("Test API");
+// Multer Configuration
+const storage = multer.diskStorage({
+  // Callback function to control the folder where the uploaded files will be saved.
+  // In this case, all files will be saved in the 'uploads' folder.
+  destination: (req, file, cb) => {
+    cb(null, 'uploads');
+  },
+  // Callback function to control the filename of the uploaded files.
+  // In this case, each filename will be a combination of the current timestamp
+  // and the original filename from the client. This is to avoid filename collisions.
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname);
+  },
 });
 
+const upload = multer({ storage });
+
+// Serve Static Files
+app.use('/uploads', express.static('uploads'));
+
+// Routes
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
@@ -36,6 +52,17 @@ app.use("/api/carts", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/checkout", stripeRoute);
 
-app.listen(process.env.PORT || 8000, () => {
-  console.log("Server is running");
+// Upload Route
+app.post('/api/upload', upload.single('img'), (req, res) => {
+  try {
+    const imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+    res.status(200).json({ imageUrl });
+  } catch (error) {
+    res.status(500).json({ message: 'Image upload failed', error });
+  }
+});
+
+// Start Server
+app.listen(process.env.PORT || 5000, () => {
+  console.log("Server is running on port 5000");
 });

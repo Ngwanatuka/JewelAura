@@ -1,9 +1,8 @@
+import React, { useState } from "react";
 import styled from "styled-components";
-import { mobile } from "../responsive";
-import { useState } from "react";
-import { login } from "../redux/apiCalls";
 import { useDispatch, useSelector } from "react-redux";
-
+import { login } from "../redux/apiCalls";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   width: 100vw;
@@ -23,13 +22,19 @@ const Container = styled.div`
 const Wrapper = styled.div`
   width: 25%;
   padding: 20px;
-  background-color: white;
-  ${mobile({ width: "75%" })}
+  background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  &:hover {
+    transform: translateY(-5px);
+  }
 `;
 
 const Title = styled.h1`
-  font-size: 24px;
-  font-weight: 300;
+  font-size: 28px;
+  font-weight: 400;
+  color: #333;
 `;
 
 const Form = styled.form`
@@ -41,7 +46,18 @@ const Input = styled.input`
   flex: 1;
   min-width: 40%;
   margin: 10px 0;
-  padding: 10px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  &:hover {
+    border-color: #888;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  }
+  &:focus {
+    outline: none;
+    border-color: teal;
+  }
 `;
 
 const Button = styled.button`
@@ -52,10 +68,14 @@ const Button = styled.button`
   color: white;
   cursor: pointer;
   margin-bottom: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  &:hover {
+    background-color: #008080;
+  }
   &:disabled {
     background-color: #9e9e9e;
     cursor: not-allowed;
-  
   }
 `;
 
@@ -64,6 +84,11 @@ const Link = styled.a`
   font-size: 12px;
   text-decoration: underline;
   cursor: pointer;
+  color: #555;
+  transition: color 0.3s ease;
+  &:hover {
+    color: teal;
+  }
 `;
 
 const Error = styled.span`
@@ -76,12 +101,18 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { isFetching, error } = useSelector((state) => state.user);
 
   const handleClick = (e) => {
     e.preventDefault();
     login(dispatch, { username, password });
   };
+
+  const handleRegisterLinkClick = () => {
+    navigate("/register");
+  };
+
   return (
     <Container>
       <Wrapper>
@@ -101,7 +132,7 @@ const Login = () => {
           </Button>
           {error && <Error>Something went wrong...</Error>}
           <Link>DO NOT YOU REMEMBER THE PASSWORD?</Link>
-          <Link>CREATE A NEW ACCOUNT</Link>
+          <Link onClick={handleRegisterLinkClick}>CREATE A NEW ACCOUNT</Link>
         </Form>
       </Wrapper>
     </Container>

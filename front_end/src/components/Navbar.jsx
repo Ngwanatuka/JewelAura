@@ -7,8 +7,9 @@ import { Link } from "react-router-dom";
 import { logout } from "../redux/userRedux";
 
 const Container = styled.div`
+margin-top: 5px;
   height: 70px;
-  background-color: #f0f0f0;
+  background-color:hsl(0, 100.00%, 99.80%);
   ${mobile({ height: "50px" })}
 `;
 
@@ -37,12 +38,23 @@ const SearchContainer = styled.div`
   border: 1px solid lightgray;
   margin-left: 25px;
   padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: all 0.3s ease;
   ${mobile({ marginLeft: "10px" })}
 `;
 
 const Input = styled.input`
   border: none;
   background-color: transparent;
+  &:hover {
+    border-color: #888;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  }
+  &:focus {
+    outline: none;
+    border-color: teal;
+  }
   ${mobile({ width: "55px" })}
 `;
 
