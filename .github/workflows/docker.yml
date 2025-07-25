@@ -48,11 +48,24 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+    
+    - name: Auto-fix security issues - Backend
+      run: cd api && npm audit fix --force
+    
+    - name: Auto-fix security issues - Frontend
+      run: cd front_end && npm audit fix --legacy-peer-deps --force
+    
     - name: Run security audit - Backend
-      run: cd api && npm audit --audit-level=critical || echo "Security warnings found but continuing"
+      run: cd api && npm audit --audit-level=high
     
     - name: Run security audit - Frontend
-      run: cd front_end && npm audit --audit-level=critical || echo "Security warnings found but continuing"
+      run: cd front_end && npm audit --audit-level=high
 
   build:
     runs-on: ubuntu-latest
