@@ -115,21 +115,21 @@ jobs:
           type=sha,prefix={{branch}}-
           type=raw,value=latest,enable={{is_default_branch}}
     
-    - name: Build and push backend
+    - name: Build backend
       uses: docker/build-push-action@v5
       with:
         context: ./api
-        push: true
+        push: false
         tags: ${{ steps.meta-backend.outputs.tags }}
         labels: ${{ steps.meta-backend.outputs.labels }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
     
-    - name: Build and push frontend
+    - name: Build frontend
       uses: docker/build-push-action@v5
       with:
         context: ./front_end
-        push: true
+        push: false
         tags: ${{ steps.meta-frontend.outputs.tags }}
         labels: ${{ steps.meta-frontend.outputs.labels }}
         cache-from: type=gha
