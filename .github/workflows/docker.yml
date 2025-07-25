@@ -25,10 +25,10 @@ jobs:
         cache-dependency-path: '**/package-lock.json'
     
     - name: Install backend dependencies
-      run: cd api && npm ci
+      run: cd api && npm install
     
     - name: Install frontend dependencies
-      run: cd front_end && npm ci --legacy-peer-deps
+      run: cd front_end && npm install --legacy-peer-deps
     
     - name: Run backend tests
       run: cd api && npm test || echo "No tests found"
@@ -54,6 +54,12 @@ jobs:
         node-version: '18'
         cache: 'npm'
         cache-dependency-path: '**/package-lock.json'
+    
+    - name: Install backend dependencies
+      run: cd api && npm install
+    
+    - name: Install frontend dependencies
+      run: cd front_end && npm install --legacy-peer-deps
     
     - name: Auto-fix security issues - Backend
       run: cd api && npm audit fix --force
