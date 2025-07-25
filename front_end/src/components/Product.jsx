@@ -23,6 +23,13 @@ const Info = styled.div`
   cursor: pointer;
 `;
 
+const Circle = styled.div`
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  position: absolute;
+`;
+
 const Container = styled.div`
   flex: 1 0 280px;
   margin: 5px;
@@ -49,12 +56,7 @@ const Container = styled.div`
   }
 `;
 
-const Circle = styled.div`
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  position: absolute;
-`;
+
 
 const Image = styled.img`
   width: 100%;
