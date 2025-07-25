@@ -1,22 +1,43 @@
 version: '3.8'
 
 services:
+  mongodb:
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+      - mongodb_data:/data/db
+    restart: unless-stopped
+
   backend:
     build: ./api
     ports:
       - "5000:5000"
     environment:
       - NODE_ENV=development
+      - MONGO_URL=mongodb://admin:password@mongodb:27017/jewelaura?authSource=admin
     volumes:
       - ./api:/app
       - /app/node_modules
+    depends_on:
+      - mongodb
+    restart: unless-stopped
 
   frontend:
     build: ./front_end
     ports:
       - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:5000
     depends_on:
       - backend
     volumes:
       - ./front_end:/app
       - /app/node_modules
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:

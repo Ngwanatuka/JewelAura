@@ -1,2 +1,6 @@
 api\node_modules\.bin
 admin
+.env
+node_modules/
+*.log
+.DS_Store
