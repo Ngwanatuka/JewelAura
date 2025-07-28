@@ -72,6 +72,8 @@ const Checkout = () => {
     try {
       const result = await processCheckout({
         userId: user.currentUser?._id,
+        products: cart.products,
+        amount: cart.total,
         address,
         tokenId: 'tok_test' // In real app, this would come from Stripe
       });
