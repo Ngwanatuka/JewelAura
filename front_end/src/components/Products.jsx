@@ -37,9 +37,10 @@ const Products = ({ cat, filters, sort }) => {
             ? `http://localhost:5000/api/products?category=${cat}`
             : "http://localhost:5000/api/products"
         );
+        console.log("Products fetched:", res.data);
         setProducts(res.data);
       } catch (err) {
-        console.log(err);
+        console.log("Error fetching products:", err);
       }
     };
     getProducts();

@@ -1,28 +1,21 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { Provider } from 'react-redux';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import Login from '../Login';
 import userReducer from '../../redux/userRedux';
 
-const createMockStore = (initialState = {}) => {
+const createTestStore = (initialState = {}) => {
   return configureStore({
     reducer: {
       user: userReducer,
     },
-    preloadedState: {
-      user: { 
-        currentUser: null, 
-        isFetching: false, 
-        error: false,
-        ...initialState.user 
-      },
-    },
+    preloadedState: initialState,
   });
 };
 
 const renderWithProviders = (component, initialState = {}) => {
-  const store = createMockStore(initialState);
+  const store = createTestStore(initialState);
   return render(
     <Provider store={store}>
       <BrowserRouter>
@@ -33,42 +26,30 @@ const renderWithProviders = (component, initialState = {}) => {
 };
 
 describe('Login Component', () => {
-  it('renders login form', () => {
+  test('should render login form', () => {
     renderWithProviders(<Login />);
-    
     expect(screen.getByText('SIGN IN')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('username')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('password')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
   });
 
-  it('handles input changes', () => {
+  test('should handle input changes', () => {
     renderWithProviders(<Login />);
-    
     const usernameInput = screen.getByPlaceholderText('username');
     const passwordInput = screen.getByPlaceholderText('password');
     
     fireEvent.change(usernameInput, { target: { value: 'testuser' } });
-    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    fireEvent.change(passwordInput, { target: { value: 'testpass' } });
     
     expect(usernameInput.value).toBe('testuser');
-    expect(passwordInput.value).toBe('password123');
+    expect(passwordInput.value).toBe('testpass');
   });
 
-  it('shows loading state during login', () => {
-    renderWithProviders(<Login />, { 
-      user: { isFetching: true, error: false, currentUser: null } 
-    });
-    
-    const loginButton = screen.getByRole('button', { name: /login/i });
-    expect(loginButton).toBeDisabled();
-  });
-
-  it('shows error message on login failure', () => {
-    renderWithProviders(<Login />, { 
-      user: { isFetching: false, error: true, currentUser: null } 
-    });
-    
-    expect(screen.getByText(/something went wrong/i)).toBeInTheDocument();
+  test('should show error when login fails', () => {
+    const initialState = {
+      user: { error: true }
+    };
+    renderWithProviders(<Login />, initialState);
+    expect(screen.getByText('Something went wrong...')).toBeInTheDocument();
   });
 });

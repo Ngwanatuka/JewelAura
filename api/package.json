@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "nodemon index.js",
-    "test": "jest --detectOpenHandles --forceExit",
-    "test:watch": "jest --watch",
+    "test": "jest",
+    "test:auth": "jest working-auth.test.js",
     "paypal": "nodemon server/server.js"
   },
   "keywords": [],

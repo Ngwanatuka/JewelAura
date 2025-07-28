@@ -6,6 +6,8 @@ import {
 } from "@material-ui/icons";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addProduct } from "../redux/cartRedux";
 
 const Info = styled.div`
   width: 100%;
@@ -95,12 +97,22 @@ const Icon = styled.div`
  * @returns {React.ReactElement} - The Product component.
  */
 const Product = ({ item }) => {
+  const dispatch = useDispatch();
+
+  const handleAddToCart = () => {
+    dispatch(addProduct({ ...item, quantity: 1 }));
+  };
+
+  const handleAddToFavorites = () => {
+    console.log('Added to favorites:', item.title);
+  };
+
   return (
     <Container>
       <Circle />
       <Image src={item.img} />
       <Info>
-        <Icon>
+        <Icon onClick={handleAddToCart}>
           <ShoppingCartOutlined />
         </Icon>
         <Icon>
@@ -108,7 +120,7 @@ const Product = ({ item }) => {
             <SearchOutlined />
           </Link>
         </Icon>
-        <Icon>
+        <Icon onClick={handleAddToFavorites}>
           <FavoriteBorderOutlined />
         </Icon>
       </Info>

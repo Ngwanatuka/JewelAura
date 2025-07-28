@@ -47,6 +47,7 @@ router.post("/login", async (req, res) => {
     });
 
     if (!user) {
+      console.log("User not found:", req.body.username);
       return res.status(401).json("Wrong username");
     }
 
@@ -59,6 +60,9 @@ router.post("/login", async (req, res) => {
     const inputPassword = req.body.password;
 
     if (originalPassword !== inputPassword) {
+      console.log("Password mismatch for user:", req.body.username);
+      console.log("Expected:", originalPassword);
+      console.log("Received:", inputPassword);
       return res.status(401).json("Wrong password");
     }
 

@@ -21,8 +21,19 @@ mongoose.connect(process.env.MONGO_URL)
   });
 
 const app = express();
+
+// CORS Configuration - MUST be first
+const corsOptions = {
+  origin: ["http://localhost:3000", "http://localhost:3002", "http://127.0.0.1:3000", "http://127.0.0.1:3002"],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'token'],
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json());
-app.use(cors({ origin: "http://localhost:3000" }));
 
 // Multer Configuration
 const storage = multer.diskStorage({

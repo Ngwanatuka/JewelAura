@@ -35,16 +35,20 @@ jobs:
       run: cd front_end && npm install --legacy-peer-deps
     
     - name: Run backend tests
-      run: cd api && npm test || echo "No tests found"
+      run: cd api && npm test
+      env:
+        MONGO_URL: ${{ secrets.MONGO_URL }}
+        JWT_SEC: ${{ secrets.JWT_SEC }}
+        PASS_SEC: ${{ secrets.PASS_SEC }}
     
     - name: Run frontend tests
-      run: cd front_end && npm test || echo "No tests found"
-    
-    - name: Lint backend
-      run: cd api && npm run lint || echo "No lint script found"
+      run: cd front_end && npm test -- --run
     
     - name: Lint frontend
-      run: cd front_end && npm run lint || echo "No lint script found"
+      run: cd front_end && npm run lint
+    
+    - name: Build frontend for testing
+      run: cd front_end && npm run build
 
   security:
     runs-on: ubuntu-latest

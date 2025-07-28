@@ -85,6 +85,7 @@ const MenuItem = styled.div`
 
 const Navbar = () => {
   const quantity = useSelector((state) => state.cart.quantity);
+  const user = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
 
   const handleLogout = () => {
@@ -103,13 +104,22 @@ const Navbar = () => {
         </Left>
         <Center>
           <Link to={"/"} style={{ textDecoration: "none", color: "black" }}>
-            <Logo>JewelAura</Logo>
+            <Logo>JEWELAURA</Logo>
           </Link>
         </Center>
         <Right>
-          <Link to="/login" style={{ textDecoration: "none", color: "black" }}>
-            <MenuItem onClick={handleLogout}>Signout</MenuItem>
-          </Link>
+          {user ? (
+            <MenuItem onClick={handleLogout}>LOGOUT</MenuItem>
+          ) : (
+            <>
+              <Link to="/register" style={{ textDecoration: "none", color: "black" }}>
+                <MenuItem>REGISTER</MenuItem>
+              </Link>
+              <Link to="/login" style={{ textDecoration: "none", color: "black" }}>
+                <MenuItem>SIGN IN</MenuItem>
+              </Link>
+            </>
+          )}
 
           <Link to="/cart" style={{ color: "black" }}>
             <MenuItem>

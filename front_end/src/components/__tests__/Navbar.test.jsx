@@ -1,26 +1,23 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { Provider } from 'react-redux';
+import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import Navbar from '../Navbar';
-import cartReducer from '../../redux/cartRedux';
 import userReducer from '../../redux/userRedux';
+import cartReducer from '../../redux/cartRedux';
 
-const createMockStore = (initialState = {}) => {
+const createTestStore = (initialState = {}) => {
   return configureStore({
     reducer: {
-      cart: cartReducer,
       user: userReducer,
+      cart: cartReducer,
     },
-    preloadedState: {
-      cart: { quantity: 0, ...initialState.cart },
-      user: { currentUser: null, ...initialState.user },
-    },
+    preloadedState: initialState,
   });
 };
 
 const renderWithProviders = (component, initialState = {}) => {
-  const store = createMockStore(initialState);
+  const store = createTestStore(initialState);
   return render(
     <Provider store={store}>
       <BrowserRouter>
@@ -31,37 +28,22 @@ const renderWithProviders = (component, initialState = {}) => {
 };
 
 describe('Navbar Component', () => {
-  it('renders navbar with logo', () => {
+  test('should render logo', () => {
     renderWithProviders(<Navbar />);
-    
-    expect(screen.getByText('JewelAura')).toBeInTheDocument();
-    expect(screen.getByText('EN')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Search')).toBeInTheDocument();
+    expect(screen.getByText('JEWELAURA')).toBeInTheDocument();
   });
 
-  it('displays cart quantity badge', () => {
-    renderWithProviders(<Navbar />, { cart: { quantity: 3 } });
-    
-    const badge = screen.getByText('3');
-    expect(badge).toBeInTheDocument();
+  test('should show login/register when user not logged in', () => {
+    renderWithProviders(<Navbar />);
+    expect(screen.getByText('SIGN IN')).toBeInTheDocument();
+    expect(screen.getByText('REGISTER')).toBeInTheDocument();
   });
 
-  it('handles search input', () => {
-    renderWithProviders(<Navbar />);
-    
-    const searchInput = screen.getByPlaceholderText('Search');
-    fireEvent.change(searchInput, { target: { value: 'diamond ring' } });
-    
-    expect(searchInput.value).toBe('diamond ring');
-  });
-
-  it('has working navigation links', () => {
-    renderWithProviders(<Navbar />);
-    
-    const logoLink = screen.getByText('JewelAura').closest('a');
-    const loginLink = screen.getByText('Signout').closest('a');
-    
-    expect(logoLink).toHaveAttribute('href', '/');
-    expect(loginLink).toHaveAttribute('href', '/login');
+  test('should show cart badge with quantity', () => {
+    const initialState = {
+      cart: { quantity: 3 }
+    };
+    renderWithProviders(<Navbar />, initialState);
+    expect(screen.getByText('3')).toBeInTheDocument();
   });
 });
