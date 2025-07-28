@@ -11,13 +11,15 @@ import Login from "./pages/Login";
 import Cart from "./pages/Cart";
 import Success from "./pages/Success";
 import Checkout from "./components/Checkout";
+import Landing from "./pages/Landing";
 import { StyleSheetManager } from "styled-components";
 
 export const App = () => {
   const user = useSelector((state) => state.user.currentUser);
 
   const routes = createBrowserRouter([
-    { path: "/", element: user ? <Home /> : <Navigate to="/login" /> },
+    { path: "/", element: user ? <Home /> : <Landing /> },
+    { path: "/home", element: user ? <Home /> : <Navigate to="/login" /> },
     { path: "/products", element: <ProductList /> },
     { path: "/products/:category", element: <ProductList /> },
     { path: "/product/:id", element: <Product /> },
