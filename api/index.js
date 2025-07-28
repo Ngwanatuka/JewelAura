@@ -9,6 +9,7 @@ import productRoutes from './routes/product.js';
 import cartRoutes from './routes/cart.js';
 import orderRoutes from './routes/order.js';
 import stripeRoute from './routes/stripe.js';
+import checkoutRoute from './routes/checkout.js';
 
 dotenv.config();
 
@@ -61,7 +62,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/carts", cartRoutes);
 app.use("/api/orders", orderRoutes);
-app.use("/api/checkout", stripeRoute);
+app.use("/api/checkout", checkoutRoute);
+app.use("/api/stripe", stripeRoute);
 
 // Health Check Route
 app.get('/health', (req, res) => {

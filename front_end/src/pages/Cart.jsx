@@ -8,14 +8,13 @@ import { useSelector } from "react-redux";
 import StripeCheckout from "react-stripe-checkout";
 import { useEffect, useState } from "react";
 import { userRequest } from "../requestMethods";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   decreaseQuantity,
   increaseQuantity,
   removeItem,
 } from "../redux/cartRedux";
-import { Link } from "react-router-dom";
 
 const stripeKey = import.meta.env.VITE_STRIPE_KEY;
 
@@ -338,18 +337,9 @@ const Cart = () => {
               <SummaryItemText>Total</SummaryItemText>
               <SummaryItemPrice>R {cart.total}</SummaryItemPrice>
             </SummaryItem>
-            <StripeCheckout
-              name="Glittering Rock Jewells"
-              // image=""
-              billingAddress
-              shippingAddress
-              description={`Your total is $${cart.total}`}
-              amount={cart.total * 100}
-              token={onToken}
-              stripeKey={stripeKey}
-            >
+            <Link to="/checkout">
               <Button>CHECKOUT NOW</Button>
-            </StripeCheckout>
+            </Link>
           </Summary>
         </Bottom>
       </Wrapper>

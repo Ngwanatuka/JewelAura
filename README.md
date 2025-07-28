@@ -8,9 +8,11 @@ Welcome to Glittering Rock Jewelles, an e-commerce project that combines a sleek
 2. Installation
 3. Running the Project
 4. Technologies Used
-5. File Structure
-6. Backend configuration
-7. Frontend configuration
+5. Development Guidelines
+6. Docker Deployment
+7. File Structure
+8. Backend configuration
+9. Frontend configuration
 
 
 ## Project Overview
@@ -66,3 +68,42 @@ The app will start on port 3000 by default.
   * Axios
   * Stripe
   * Styled Components
+
+## Development Guidelines
+
+### Test-Driven Development (TDD)
+All new features must follow TDD methodology:
+1. **Red**: Write failing tests first
+2. **Green**: Write minimal code to make tests pass
+3. **Refactor**: Improve code while keeping tests green
+
+### Testing Requirements
+- Backend: Jest with Supertest for API testing
+- Frontend: Vitest with React Testing Library
+- All tests must pass before merging to main branch
+- Minimum test coverage for new features
+
+## Docker Deployment
+
+### Build Images
+**Windows:**
+```bash
+.\build-images.bat
+```
+
+**Linux/macOS:**
+```bash
+chmod +x build-images.sh
+./build-images.sh
+```
+
+### Run with Docker Compose
+**Development:**
+```bash
+docker-compose up
+```
+
+**Production:**
+```bash
+docker-compose -f docker-compose.prod.yml up
+```

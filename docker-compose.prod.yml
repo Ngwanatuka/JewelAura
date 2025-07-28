@@ -1,15 +1,29 @@
 version: '3.8'
 
 services:
+  mongodb:
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+      - mongodb_data:/data/db
+    restart: unless-stopped
+
   backend:
-    image: ghcr.io/ngwanatuka/jewelaura-backend:latest
+    image: ngwanatuka/jewelaura-backend:1.1.0
     ports:
       - "5000:5000"
     environment:
       - NODE_ENV=production
-      - MONGO_URL=${MONGO_URL}
-      - JWT_SECRET=${JWT_SECRET}
-      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - MONGO_URL=mongodb://admin:password@mongodb:27017/jewelaura?authSource=admin
+      - JWT_SEC=your-jwt-secret-key
+      - PASS_SEC=your-pass-secret-key
+      - STRIPE_KEY=your-stripe-secret-key
+    depends_on:
+      - mongodb
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
@@ -18,7 +32,7 @@ services:
       retries: 3
 
   frontend:
-    image: ghcr.io/ngwanatuka/jewelaura-frontend:latest
+    image: ngwanatuka/jewelaura-frontend:1.1.0
     ports:
       - "3000:3000"
     depends_on:
@@ -42,3 +56,6 @@ services:
       - frontend
       - backend
     restart: unless-stopped
+
+volumes:
+  mongodb_data:

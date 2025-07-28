@@ -10,6 +10,7 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Cart from "./pages/Cart";
 import Success from "./pages/Success";
+import Checkout from "./components/Checkout";
 import { StyleSheetManager } from "styled-components";
 
 export const App = () => {
@@ -22,6 +23,7 @@ export const App = () => {
     { path: "/product/:id", element: <Product /> },
     { path: "/success", element: <Success /> },
     { path: "/cart", element: <Cart /> },
+    { path: "/checkout", element: user ? <Checkout /> : <Navigate to="/login" /> },
     { path: "/register", element: user ? <Navigate to="/" /> : <Register /> },
     { path: "/login", element: user ? <Navigate to="/" /> : <Login /> }
   ]);

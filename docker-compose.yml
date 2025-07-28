@@ -13,6 +13,7 @@ services:
     restart: unless-stopped
 
   backend:
+    image: ngwanatuka/jewelaura-backend:1.1.0
     build: ./api
     ports:
       - "5000:5000"
@@ -27,6 +28,7 @@ services:
     restart: unless-stopped
 
   frontend:
+    image: ngwanatuka/jewelaura-frontend:1.1.0
     build: ./front_end
     ports:
       - "3000:3000"
