@@ -83,6 +83,11 @@ All new features must follow TDD methodology:
 - All tests must pass before merging to main branch
 - Minimum test coverage for new features
 
+### Product Management
+- Use `npm run seed` to populate database with sample products
+- Docker: `docker exec jewelaura-backend-1 node seed-products.js`
+- Products include images served from `/uploads/` directory
+
 ## Docker Deployment
 
 ### Build Images
