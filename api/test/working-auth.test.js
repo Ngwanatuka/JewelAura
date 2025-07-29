@@ -21,9 +21,7 @@ describe('Working Auth Tests', () => {
     }
     
     // Connect to test database
-    const mongoUrl = process.env.NODE_ENV === 'test' 
-      ? 'mongodb://localhost:27017/jewelaura_test'
-      : process.env.MONGO_URL || 'mongodb://localhost:27017/jewelaura_test';
+    const mongoUrl = 'mongodb://localhost:27017/jewelaura_test';
     await mongoose.connect(mongoUrl, {
       serverSelectionTimeoutMS: 5000
     });
