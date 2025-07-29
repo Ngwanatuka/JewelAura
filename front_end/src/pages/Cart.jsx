@@ -5,7 +5,6 @@ import Announcement from "../components/Announcement";
 import { Add, Remove } from "@material-ui/icons";
 import { mobile } from "../responsive";
 import { useSelector } from "react-redux";
-import StripeCheckout from "react-stripe-checkout";
 import { useEffect, useState } from "react";
 import { userRequest } from "../requestMethods";
 import { useNavigate, Link } from "react-router-dom";
@@ -16,7 +15,7 @@ import {
   removeItem,
 } from "../redux/cartRedux";
 
-const stripeKey = import.meta.env.VITE_STRIPE_KEY;
+
 
 const Container = styled.div``;
 
@@ -240,9 +239,7 @@ const Cart = () => {
  *
  * @param {Object} token Stripe token object
  */
-  const onToken = (token) => {
-    setStripeToken(token);
-  };
+
   console.log(stripeToken);
 
   useEffect(() => {
