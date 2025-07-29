@@ -18,6 +18,11 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
     steps:
     - uses: actions/checkout@v4
     
@@ -37,9 +42,10 @@ jobs:
     - name: Run backend tests
       run: cd api && npm test
       env:
-        MONGO_URL: ${{ secrets.MONGO_URL }}
-        JWT_SEC: ${{ secrets.JWT_SEC }}
-        PASS_SEC: ${{ secrets.PASS_SEC }}
+        NODE_ENV: test
+        MONGO_URL: mongodb://localhost:27017/jewelaura_test
+        JWT_SEC: test_jwt_secret
+        PASS_SEC: test_pass_secret
     
     - name: Run frontend tests
       run: cd front_end && npm test -- --run
