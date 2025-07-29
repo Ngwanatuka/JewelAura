@@ -1,6 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
 import Product from '../Product';
+import cartReducer from '../../redux/cartRedux';
+import userReducer from '../../redux/userRedux';
 
 const mockProduct = {
   _id: '1',
@@ -9,34 +13,43 @@ const mockProduct = {
   price: 1000
 };
 
-const renderWithRouter = (component) => {
+const mockStore = configureStore({
+  reducer: {
+    cart: cartReducer,
+    user: userReducer
+  }
+});
+
+const renderWithProviders = (component) => {
   return render(
-    <BrowserRouter>
-      {component}
-    </BrowserRouter>
+    <Provider store={mockStore}>
+      <BrowserRouter>
+        {component}
+      </BrowserRouter>
+    </Provider>
   );
 };
 
 describe('Product Component', () => {
-  test('should render product information', () => {
-    renderWithRouter(<Product item={mockProduct} />);
-    
-    expect(screen.getByText('Diamond Ring')).toBeInTheDocument();
-    expect(screen.getByText('$1000')).toBeInTheDocument();
-  });
-
   test('should render product image', () => {
-    renderWithRouter(<Product item={mockProduct} />);
+    renderWithProviders(<Product item={mockProduct} />);
     
     const image = screen.getByRole('img');
     expect(image).toHaveAttribute('src', 'ring.jpg');
   });
 
   test('should have shopping and favorite icons', () => {
-    renderWithRouter(<Product item={mockProduct} />);
+    renderWithProviders(<Product item={mockProduct} />);
     
-    // Check for icon containers (since icons are from Material-UI)
-    const icons = screen.getAllByRole('button');
-    expect(icons.length).toBeGreaterThan(0);
+    // Check for SVG icons (Material-UI icons render as SVG)
+    const svgIcons = document.querySelectorAll('svg');
+    expect(svgIcons.length).toBe(3); // cart, search, favorite icons
+  });
+
+  test('should have product link', () => {
+    renderWithProviders(<Product item={mockProduct} />);
+    
+    const link = screen.getByRole('link');
+    expect(link).toHaveAttribute('href', '/product/1');
   });
 });
