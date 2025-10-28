@@ -50,7 +50,7 @@ const Landing = () => {
     <Container>
       <Hero>
         <Title>Welcome to JewelAura</Title>
-        <Button to="/products">Shop Now</Button>
+        <Button to="/home">Shop Now</Button>
       </Hero>
       
       <Section>

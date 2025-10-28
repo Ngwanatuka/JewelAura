@@ -6,8 +6,9 @@ import {
 } from "@material-ui/icons";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addProduct } from "../redux/cartRedux";
+import { useNavigate } from "react-router-dom";
 
 const Info = styled.div`
   width: 100%;
@@ -98,8 +99,14 @@ const Icon = styled.div`
  */
 const Product = ({ item }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.user.currentUser);
 
   const handleAddToCart = () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
     dispatch(addProduct({ ...item, quantity: 1 }));
   };
 
@@ -112,7 +119,7 @@ const Product = ({ item }) => {
       <Circle />
       <Image src={item.img} />
       <Info>
-        <Icon onClick={handleAddToCart}>
+        <Icon onClick={handleAddToCart} data-testid="add-to-cart">
           <ShoppingCartOutlined />
         </Icon>
         <Icon>
