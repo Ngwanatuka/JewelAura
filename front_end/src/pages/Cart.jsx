@@ -191,7 +191,7 @@ const Button = styled.button`
  * @returns {React.ReactElement} - The Cart component.
  */
 const Cart = () => {
-  const [stripeToken, setStripeToken] = useState(null);
+  const [stripeToken] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
