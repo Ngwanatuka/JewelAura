@@ -57,27 +57,59 @@ router.get("/find/:id", async (req, res) => {
   }
 });
 
-// GET ALL PRODUCTS
+// GET ALL PRODUCTS WITH SEARCH AND FILTERING
 
 router.get("/", async (req, res) => {
-    const qNew= req.query.new;
-    const qCategory= req.query.category;
+  const qNew = req.query.new;
+  const qCategory = req.query.category;
+  const qSearch = req.query.search;
+  const qMinPrice = req.query.minPrice;
+  const qMaxPrice = req.query.maxPrice;
+  const qSort = req.query.sort; // 'price-asc', 'price-desc', 'newest'
+
   try {
-    let products;
-    if(qNew){
-        products = await Product.find().sort({createdAt: -1 }).limit(5);
-    } else if(qCategory){
-        products = await Product.find({categories: {
-            $in: [qCategory],
-        },
-    });
+    let query = {};
+
+    // Category filter
+    if (qCategory) {
+      query.categories = { $in: [qCategory] };
     }
-    else{
-        products = await Product.find();
+
+    // Search filter (search in title and description)
+    if (qSearch) {
+      query.$or = [
+        { title: { $regex: qSearch, $options: 'i' } },
+        { desc: { $regex: qSearch, $options: 'i' } }
+      ];
     }
+
+    // Price range filter
+    if (qMinPrice || qMaxPrice) {
+      query.price = {};
+      if (qMinPrice) query.price.$gte = Number(qMinPrice);
+      if (qMaxPrice) query.price.$lte = Number(qMaxPrice);
+    }
+
+    let productsQuery = Product.find(query);
+
+    // Sorting
+    if (qSort === 'price-asc') {
+      productsQuery = productsQuery.sort({ price: 1 });
+    } else if (qSort === 'price-desc') {
+      productsQuery = productsQuery.sort({ price: -1 });
+    } else if (qSort === 'newest' || qNew) {
+      productsQuery = productsQuery.sort({ createdAt: -1 });
+    }
+
+    // Limit for "new" query
+    if (qNew) {
+      productsQuery = productsQuery.limit(5);
+    }
+
+    const products = await productsQuery;
     res.status(200).json(products);
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ message: err.message });
   }
 });
 

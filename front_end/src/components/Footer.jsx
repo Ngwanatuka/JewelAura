@@ -11,10 +11,11 @@ import styled from "styled-components";
 import { mobile } from "../responsive";
 
 const Container = styled.div`
-  width: 90vw;
-  margin: 0 auto;
   display: flex;
-  ${mobile({ width: "100vw", height: "auto", flexDirection: "column" })}
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  padding: 40px 0;
+  ${mobile({ flexDirection: "column" })}
 `;
 
 const Left = styled.div`
@@ -24,10 +25,16 @@ const Left = styled.div`
   padding: 20px;
 `;
 
-const Logo = styled.h1``;
+const Logo = styled.h1`
+  font-family: var(--font-heading);
+  color: var(--primary);
+  margin-bottom: 20px;
+`;
 
 const Desc = styled.p`
   margin: 20px 0px;
+  line-height: 1.6;
+  color: var(--text-light);
 `;
 
 const SocialContainer = styled.div`
@@ -44,6 +51,11 @@ const SocialIcon = styled.div`
   align-items: center;
   justify-content: center;
   margin-right: 20px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  &:hover {
+    transform: translateY(-5px);
+  }
 `;
 
 const Center = styled.div`
@@ -54,6 +66,8 @@ const Center = styled.div`
 
 const Title = styled.h3`
   margin-bottom: 30px;
+  font-family: var(--font-heading);
+  color: var(--text-main);
 `;
 
 const List = styled.ul`
@@ -68,6 +82,11 @@ const ListItem = styled.li`
   width: 50%;
   margin-bottom: 10px;
   cursor: pointer;
+  color: var(--text-light);
+  transition: color 0.2s;
+  &:hover {
+    color: var(--primary);
+  }
 `;
 
 const Right = styled.div`
@@ -80,6 +99,7 @@ const ContactItem = styled.div`
   margin-bottom: 20px;
   display: flex;
   align-items: center;
+  color: var(--text-light);
 `;
 
 const Payment = styled.img`
@@ -90,10 +110,10 @@ const Footer = () => {
   return (
     <Container>
       <Left>
-        <Logo>Glittering Rock Jewells</Logo>
+        <Logo>JEWELAURA</Logo>
         <Desc>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          Discover the finest jewelry collection crafted with elegance and passion.
+          JewelAura brings you timeless pieces that celebrate your unique beauty.
         </Desc>
         <SocialContainer>
           <SocialIcon color="3B5999">
@@ -115,24 +135,25 @@ const Footer = () => {
         <List>
           <ListItem>Home</ListItem>
           <ListItem>Cart</ListItem>
-          <ListItem>Mans wear</ListItem>
-          <ListItem>Womens wear</ListItem>
+          <ListItem>Men's Fashion</ListItem>
+          <ListItem>Women's Fashion</ListItem>
+          <ListItem>Accessories</ListItem>
           <ListItem>My Account</ListItem>
+          <ListItem>Order Tracking</ListItem>
           <ListItem>Wishlist</ListItem>
           <ListItem>Terms</ListItem>
-          <ListItem>Order Tracking</ListItem>
         </List>
       </Center>
       <Right>
         <Title>Contact</Title>
         <ContactItem>
-          <Room style={{ marginRight: "10px" }} /> Address
+          <Room style={{ marginRight: "10px", color: "var(--primary)" }} /> 622 Dixie Path, South Tobinchester 98336
         </ContactItem>
         <ContactItem>
-          <Phone style={{ marginRight: "10px" }} /> +27 123 456 789
+          <Phone style={{ marginRight: "10px", color: "var(--primary)" }} /> +1 234 56 78
         </ContactItem>
         <ContactItem>
-          <MailOutline style={{ marginRight: "10px" }} /> moses@gmail.com
+          <MailOutline style={{ marginRight: "10px", color: "var(--primary)" }} /> contact@jewelaura.com
         </ContactItem>
         <Payment src="https://i.ibb.co/Qfvn4z6/payment.png" />
       </Right>

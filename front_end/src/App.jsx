@@ -12,10 +12,20 @@ import Cart from "./pages/Cart";
 import Success from "./pages/Success";
 import Checkout from "./components/Checkout";
 import Landing from "./pages/Landing";
+import Profile from "./pages/Profile";
+import Favorites from "./pages/Favorites";
+import OrderHistory from "./pages/OrderHistory";
+import AdminLayout from "./components/admin/AdminLayout";
+import AdminHome from "./pages/admin/AdminHome";
+import AdminProductList from "./pages/admin/ProductList";
+import UserList from "./pages/admin/UserList";
+import OrderList from "./pages/admin/OrderList";
+import NewProduct from "./pages/admin/NewProduct";
 import { StyleSheetManager } from "styled-components";
 
 export const App = () => {
   const user = useSelector((state) => state.user.currentUser);
+  const isAdmin = user?.isAdmin;
 
   const routes = createBrowserRouter([
     { path: "/", element: user ? <Home /> : <Landing /> },
@@ -26,8 +36,22 @@ export const App = () => {
     { path: "/success", element: <Success /> },
     { path: "/cart", element: <Cart /> },
     { path: "/checkout", element: user ? <Checkout /> : <Navigate to="/login" /> },
+    { path: "/profile", element: user ? <Profile /> : <Navigate to="/login" /> },
+    { path: "/favorites", element: user ? <Favorites /> : <Navigate to="/login" /> },
+    { path: "/orders", element: user ? <OrderHistory /> : <Navigate to="/login" /> },
     { path: "/register", element: user ? <Navigate to="/" /> : <Register /> },
-    { path: "/login", element: user ? <Navigate to="/" /> : <Login /> }
+    { path: "/login", element: user ? <Navigate to="/" /> : <Login /> },
+    {
+      path: "/admin",
+      element: isAdmin ? <AdminLayout /> : <Navigate to="/" />,
+      children: [
+        { path: "", element: <AdminHome /> },
+        { path: "products", element: <AdminProductList /> },
+        { path: "newproduct", element: <NewProduct /> },
+        { path: "users", element: <UserList /> },
+        { path: "orders", element: <OrderList /> },
+      ],
+    },
   ]);
 
   return (

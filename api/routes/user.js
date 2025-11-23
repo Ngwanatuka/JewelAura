@@ -40,6 +40,20 @@ router.delete("/:id", verifyTokenAndAuthorization, async (req, res) => {
   }
 });
 
+//GET USER PROFILE (for authenticated user)
+router.get("/profile/:id", verifyTokenAndAuthorization, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const { password, ...others } = user._doc;
+    res.status(200).json(others);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 //GET USER
 router.get("/find/:id", verifyTokenAndAdmin, async (req, res) => {
   try {

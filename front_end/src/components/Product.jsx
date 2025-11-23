@@ -1,8 +1,10 @@
 // Product.jsx
+import { useEffect, useState } from "react";
 import {
   FavoriteBorderOutlined,
   SearchOutlined,
   ShoppingCartOutlined,
+  Favorite as FavoriteIcon,
 } from "@material-ui/icons";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
@@ -101,6 +103,14 @@ const Product = ({ item }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.currentUser);
+  const favorites = useSelector((state) => state.favorites.products);
+  const [isFavorited, setIsFavorited] = useState(false);
+
+  useEffect(() => {
+    // Check if product is in favorites
+    const favorited = favorites.some(fav => fav.productId === item._id);
+    setIsFavorited(favorited);
+  }, [favorites, item._id]);
 
   const handleAddToCart = () => {
     if (!user) {
@@ -110,8 +120,29 @@ const Product = ({ item }) => {
     dispatch(addProduct({ ...item, quantity: 1 }));
   };
 
-  const handleAddToFavorites = () => {
-    console.log('Added to favorites:', item.title);
+  const handleAddToFavorites = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      if (isFavorited) {
+        // Remove from favorites
+        const { removeFavorite } = await import('../services/favorites');
+        await removeFavorite(user._id, item._id, user.accessToken);
+        const { removeFromFavorites } = await import('../redux/favoritesRedux');
+        dispatch(removeFromFavorites(item._id));
+      } else {
+        // Add to favorites
+        const { addFavorite } = await import('../services/favorites');
+        const favorite = await addFavorite(user._id, item._id, user.accessToken);
+        const { addToFavorites } = await import('../redux/favoritesRedux');
+        dispatch(addToFavorites(favorite));
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    }
   };
 
   return (
@@ -123,12 +154,12 @@ const Product = ({ item }) => {
           <ShoppingCartOutlined />
         </Icon>
         <Icon>
-          <Link to={`/product/${item._id}`} style={{color: "black"}}>
+          <Link to={`/product/${item._id}`} style={{ color: "black" }}>
             <SearchOutlined />
           </Link>
         </Icon>
         <Icon onClick={handleAddToFavorites}>
-          <FavoriteBorderOutlined />
+          {isFavorited ? <FavoriteIcon style={{ color: 'red' }} /> : <FavoriteBorderOutlined />}
         </Icon>
       </Info>
     </Container>

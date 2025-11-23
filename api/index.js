@@ -10,6 +10,7 @@ import cartRoutes from './routes/cart.js';
 import orderRoutes from './routes/order.js';
 import stripeRoute from './routes/stripe.js';
 import checkoutRoute from './routes/checkout.js';
+import favoritesRoute from './routes/favorites.js';
 
 dotenv.config();
 
@@ -25,7 +26,16 @@ const app = express();
 
 // CORS Configuration - MUST be first
 const corsOptions = {
-  origin: ["http://localhost:3000", "http://localhost:3002", "http://127.0.0.1:3000", "http://127.0.0.1:3002"],
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://localhost:3002",
+    "http://localhost:3003",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+    "http://127.0.0.1:3002",
+    "http://127.0.0.1:3003"
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'token'],
@@ -64,11 +74,12 @@ app.use("/api/carts", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/checkout", checkoutRoute);
 app.use("/api/stripe", stripeRoute);
+app.use("/api/favorites", favoritesRoute);
 
 // Health Check Route
 app.get('/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'OK', 
+  res.status(200).json({
+    status: 'OK',
     timestamp: new Date().toISOString(),
     uptime: process.uptime()
   });

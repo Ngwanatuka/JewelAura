@@ -24,19 +24,31 @@ const renderLanding = () => {
 describe('Landing Page', () => {
   it('should render hero section', () => {
     renderLanding();
-    
+
     expect(screen.getByText('Welcome to JewelAura')).toBeInTheDocument();
   });
 
   it('should render call-to-action button', () => {
     renderLanding();
-    
+
     expect(screen.getByText('Shop Now')).toBeInTheDocument();
   });
 
-  it('should render featured products section', () => {
+  it('should render featured categories section', () => {
     renderLanding();
-    
-    expect(screen.getByText('Featured Products')).toBeInTheDocument();
+
+    expect(screen.getByText('Featured Categories')).toBeInTheDocument();
+  });
+
+  it('should render why choose us section', () => {
+    renderLanding();
+
+    expect(screen.getByText('Why Choose JewelAura?')).toBeInTheDocument();
+  });
+
+  it('should render testimonials section', () => {
+    renderLanding();
+
+    expect(screen.getByText('What Our Customers Say')).toBeInTheDocument();
   });
 });

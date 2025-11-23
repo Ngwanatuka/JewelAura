@@ -21,65 +21,57 @@ const Container = styled.div`
  * @param {string} cat - The category of products to be rendered.
  * @param {Object} filters - A dictionary of filters to be applied to the products.
  * @param {string} sort - The criteria to sort the products by.
+ * @param {string} searchQuery - Search query for products.
+ * @param {Object} priceRange - Price range filter with min and max.
  */
-const Products = ({ cat, filters, sort }) => {
-
-  console.log(cat, filters, sort);
+const Products = ({ cat, filters, sort, searchQuery, priceRange }) => {
 
   const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const getProducts = async () => {
+      setLoading(true);
       try {
-        const res = await axios.get(
-          cat
-            ? `http://localhost:5000/api/products?category=${cat}`
-            : "http://localhost:5000/api/products"
-        );
-        console.log("Products fetched:", res.data);
+        // Build query parameters
+        const params = new URLSearchParams();
+
+        if (cat) params.append('category', cat);
+        if (searchQuery) params.append('search', searchQuery);
+        if (sort) params.append('sort', sort);
+        if (priceRange?.min) params.append('minPrice', priceRange.min);
+        if (priceRange?.max) params.append('maxPrice', priceRange.max);
+
+        // Add other filters (color, size)
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value) params.append(key, value);
+        });
+
+        const queryString = params.toString();
+        const url = `http://localhost:5000/api/products${queryString ? `?${queryString}` : ''}`;
+
+        const res = await axios.get(url);
         setProducts(res.data);
       } catch (err) {
         console.log("Error fetching products:", err);
+      } finally {
+        setLoading(false);
       }
     };
     getProducts();
-  }, [cat]);
+  }, [cat, filters, sort, searchQuery, priceRange]);
 
-  useEffect(() => {
-    cat &&
-      setFilteredProducts(
-        products.filter((item) =>
-          Object.entries(filters).every(([key, value]) =>
-            item[key].includes(value)
-          )
-        )
-      );
-  }, [products, cat, filters]);
-
-  useEffect(() => {
-    if (sort === "newest") {
-      setFilteredProducts((prev) =>
-        [...prev].sort((a, b) => a.createdAt - b.createdAt)
-      );
-    } else if (sort === "asc") {
-      setFilteredProducts((prev) =>
-        [...prev].sort((a, b) => a.price - b.price)
-      );
-    } else {
-      setFilteredProducts((prev) =>
-        [...prev].sort((a, b) => b.price - a.price)
-      );
-    }
-  }, [sort]);
+  if (loading) {
+    return <Container>Loading products...</Container>;
+  }
 
   return (
     <Container>
-      {cat
-        ? filteredProducts.map((item) => <Product item={item} key={item._id} />)
-        : products
-            .slice(0, 8)
-            .map((item) => <Product item={item} key={item._id} />)}
+      {products.length > 0 ? (
+        products.map((item) => <Product item={item} key={item._id} />)
+      ) : (
+        <div>No products found</div>
+      )}
     </Container>
   );
 };
@@ -88,6 +80,8 @@ Products.propTypes = {
   cat: PropTypes.string,
   filters: PropTypes.object,
   sort: PropTypes.string,
+  searchQuery: PropTypes.string,
+  priceRange: PropTypes.object,
 };
 
 export default Products;

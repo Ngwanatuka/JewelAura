@@ -57,7 +57,7 @@ Thumbs.db
 *.temp
 
 # Admin panel (if not needed)
-admin/
+
 
 # Test files that shouldn't be committed
 test-connection.js

@@ -37,11 +37,45 @@ const Select = styled.select`
 
 const Option = styled.option``;
 
+const SearchContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+`;
+
+const SearchInput = styled.input`
+  width: 50%;
+  padding: 12px 20px;
+  border: 2px solid #ddd;
+  border-radius: 25px;
+  font-size: 16px;
+  outline: none;
+
+  &:focus {
+    border-color: teal;
+  }
+`;
+
+const PriceInput = styled.input`
+  width: 80px;
+  padding: 8px;
+  margin-right: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  outline: none;
+
+  &:focus {
+    border-color: teal;
+  }
+`;
+
 const ProductList = () => {
   const location = useLocation();
   const cat = location.pathname.split("/")[2];
   const [filters, setFilters] = useState({});
   const [sort, setSort] = useState("newest");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [priceRange, setPriceRange] = useState({ min: "", max: "" });
 
   const handleFilters = (e) => {
     const value = e.target.value;
@@ -51,12 +85,27 @@ const ProductList = () => {
     });
   };
 
-  
+  const handlePriceChange = (e) => {
+    setPriceRange({
+      ...priceRange,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+
   return (
     <Container>
       <Announcements />
       <Navbar />
-      <Tittle>{cat}</Tittle>
+      <Tittle>{cat || "All Products"}</Tittle>
+      <SearchContainer>
+        <SearchInput
+          type="text"
+          placeholder="Search products..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </SearchContainer>
       <FilterContainer>
         <Filter>
           <FilterText>Filter Products:</FilterText>
@@ -67,25 +116,40 @@ const ProductList = () => {
             <Option value="Silver">Silver</Option>
             <Option value="Green">Green</Option>
             <Option value="Yellow">Yellow</Option>
-           
+
           </Select>
-          <Select name="size" onChange={handleFilters}> 
+          <Select name="size" onChange={handleFilters}>
             <Option disabled>Size</Option>
             <Option value="small">Small</Option>
             <Option value="medium">Medium</Option>
             <Option value="large">Large</Option>
-          </Select> 
+          </Select>
+          <FilterText>Price Range:</FilterText>
+          <PriceInput
+            type="number"
+            name="min"
+            placeholder="Min"
+            value={priceRange.min}
+            onChange={handlePriceChange}
+          />
+          <PriceInput
+            type="number"
+            name="max"
+            placeholder="Max"
+            value={priceRange.max}
+            onChange={handlePriceChange}
+          />
         </Filter>
         <Filter>
           <FilterText>Sort Products:</FilterText>
           <Select onChange={(e) => setSort(e.target.value)}>
             <Option value="newest">Newest</Option>
-            <Option value="asc">Price (asc)</Option>
-            <Option value="desc">Price (desc)</Option>
+            <Option value="price-asc">Price (Low to High)</Option>
+            <Option value="price-desc">Price (High to Low)</Option>
           </Select>
         </Filter>
       </FilterContainer>
-      <Products cat={cat} filters={filters} sort={sort}/>
+      <Products cat={cat} filters={filters} sort={sort} searchQuery={searchQuery} priceRange={priceRange} />
       <Newsletter />
       <Footer />
     </Container>
