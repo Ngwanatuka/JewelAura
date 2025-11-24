@@ -1,5 +1,8 @@
 import { Router } from "express";
 import Order from "../models/Order.js";
+import LoyaltyPoints from "../models/LoyaltyPoints.js";
+import { sendEmail } from "../services/emailService.js";
+import { POINTS_CONFIG } from "./loyalty.js";
 import {
   verifyToken,
   verifyTokenAndAuthorization,
@@ -93,6 +96,110 @@ router.get("/income", verifyTokenAndAdmin, async (req, res) => {
       },
     ]);
     res.status(200).json(income);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// UPDATE SHIPPING INFO (Admin)
+router.put("/:id/shipping", verifyTokenAndAdmin, async (req, res) => {
+  try {
+    const { trackingNumber, shippingCarrier, estimatedDelivery } = req.body;
+
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          trackingNumber,
+          shippingCarrier,
+          estimatedDelivery,
+          deliveryStatus: "shipped",
+        },
+      },
+      { new: true }
+    );
+
+    if (!order) {
+      return res.status(404).json("Order not found");
+    }
+
+    // Send shipping notification email
+    try {
+      await sendEmail(order.userId, "orderShipped", {
+        order,
+        user: { username: "Customer" },
+      });
+    } catch (emailError) {
+      console.error("Failed to send shipping email:", emailError);
+    }
+
+    res.status(200).json(order);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// UPDATE DELIVERY STATUS (Admin)
+router.put("/:id/status", verifyTokenAndAdmin, async (req, res) => {
+  try {
+    const { deliveryStatus, deliveryDate, notes } = req.body;
+
+    const updateData = { deliveryStatus };
+    if (deliveryDate) updateData.deliveryDate = deliveryDate;
+    if (notes) updateData.notes = notes;
+
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { $set: updateData },
+      { new: true }
+    );
+
+    if (!order) {
+      return res.status(404).json("Order not found");
+    }
+
+    // Send delivery notification if delivered
+    if (deliveryStatus === "delivered") {
+      try {
+        await sendEmail(order.userId, "orderDelivered", {
+          order,
+          user: { username: "Customer" },
+        });
+      } catch (emailError) {
+        console.error("Failed to send delivery email:", emailError);
+      }
+    }
+
+    res.status(200).json(order);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// GET ORDER TRACKING INFO
+router.get("/:id/tracking", verifyToken, async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json("Order not found");
+    }
+
+    // Check authorization
+    if (order.userId !== req.user.id && !req.user.isAdmin) {
+      return res.status(403).json("Not authorized");
+    }
+
+    res.status(200).json({
+      orderId: order._id,
+      status: order.status,
+      deliveryStatus: order.deliveryStatus,
+      trackingNumber: order.trackingNumber,
+      shippingCarrier: order.shippingCarrier,
+      estimatedDelivery: order.estimatedDelivery,
+      deliveryDate: order.deliveryDate,
+      createdAt: order.createdAt,
+    });
   } catch (err) {
     res.status(500).json(err);
   }

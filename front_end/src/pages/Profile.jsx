@@ -4,6 +4,7 @@ import styled from "styled-components";
 import Navbar from "../components/Navbar";
 import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
+import LoyaltyWidget from "../components/LoyaltyWidget";
 import { getProfile, updateProfile } from "../services/profile";
 
 const Container = styled.div``;
@@ -228,6 +229,7 @@ const Profile = () => {
                         )}
                     </ButtonContainer>
                 </Form>
+                {user && <LoyaltyWidget userId={user._id} />}
             </Wrapper>
             <Footer />
         </Container>

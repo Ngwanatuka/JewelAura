@@ -8,9 +8,11 @@ import authRoutes from './routes/auth.js';
 import productRoutes from './routes/product.js';
 import cartRoutes from './routes/cart.js';
 import orderRoutes from './routes/order.js';
-import stripeRoute from './routes/stripe.js';
-import checkoutRoute from './routes/checkout.js';
+import payfastRoute from './routes/payfast.js';
 import favoritesRoute from './routes/favorites.js';
+import reviewRoutes from './routes/review.js';
+import returnRoutes from './routes/return.js';
+import loyaltyRoutes from './routes/loyalty.js';
 
 dotenv.config();
 
@@ -72,9 +74,11 @@ app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/carts", cartRoutes);
 app.use("/api/orders", orderRoutes);
-app.use("/api/checkout", checkoutRoute);
-app.use("/api/stripe", stripeRoute);
+app.use("/api/payfast", payfastRoute);
 app.use("/api/favorites", favoritesRoute);
+app.use("/api/reviews", reviewRoutes);
+app.use("/api/returns", returnRoutes);
+app.use("/api/loyalty", loyaltyRoutes);
 
 // Health Check Route
 app.get('/health', (req, res) => {

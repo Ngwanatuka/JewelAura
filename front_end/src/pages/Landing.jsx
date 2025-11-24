@@ -291,7 +291,7 @@ const Landing = () => {
           <Benefit>
             <BenefitIcon>🚚</BenefitIcon>
             <BenefitTitle>Free Shipping</BenefitTitle>
-            <BenefitText>Complimentary shipping on all orders over $100 worldwide.</BenefitText>
+            <BenefitText>Complimentary shipping on all orders over R1000 nationwide.</BenefitText>
           </Benefit>
           <Benefit>
             <BenefitIcon>💎</BenefitIcon>

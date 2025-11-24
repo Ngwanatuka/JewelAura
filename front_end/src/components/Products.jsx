@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { mobile } from "../responsive";
-
+import Skeleton from "./Skeleton";
 const Container = styled.div`
   width: 90vw;
   margin: 0 auto;
@@ -13,6 +13,7 @@ const Container = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   ${mobile({ width: "100vw", padding: "10px" })}
+  gap: 20px;
 `;
 
 /**

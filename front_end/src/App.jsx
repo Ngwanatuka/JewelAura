@@ -15,6 +15,8 @@ import Landing from "./pages/Landing";
 import Profile from "./pages/Profile";
 import Favorites from "./pages/Favorites";
 import OrderHistory from "./pages/OrderHistory";
+import OrderTracking from "./pages/OrderTracking";
+import Returns from "./pages/Returns";
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminHome from "./pages/admin/AdminHome";
 import AdminProductList from "./pages/admin/ProductList";
@@ -39,6 +41,8 @@ export const App = () => {
     { path: "/profile", element: user ? <Profile /> : <Navigate to="/login" /> },
     { path: "/favorites", element: user ? <Favorites /> : <Navigate to="/login" /> },
     { path: "/orders", element: user ? <OrderHistory /> : <Navigate to="/login" /> },
+    { path: "/orders/:orderId/tracking", element: user ? <OrderTracking /> : <Navigate to="/login" /> },
+    { path: "/returns", element: user ? <Returns /> : <Navigate to="/login" /> },
     { path: "/register", element: user ? <Navigate to="/" /> : <Register /> },
     { path: "/login", element: user ? <Navigate to="/" /> : <Login /> },
     {

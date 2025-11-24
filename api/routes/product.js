@@ -66,6 +66,8 @@ router.get("/", async (req, res) => {
   const qMinPrice = req.query.minPrice;
   const qMaxPrice = req.query.maxPrice;
   const qSort = req.query.sort; // 'price-asc', 'price-desc', 'newest'
+  const qColor = req.query.color;
+  const qSize = req.query.size;
 
   try {
     let query = {};
@@ -73,6 +75,16 @@ router.get("/", async (req, res) => {
     // Category filter
     if (qCategory) {
       query.categories = { $in: [qCategory] };
+    }
+
+    // Color filter
+    if (qColor) {
+      query.color = { $in: [qColor] };
+    }
+
+    // Size filter
+    if (qSize) {
+      query.size = { $in: [qSize] };
     }
 
     // Search filter (search in title and description)

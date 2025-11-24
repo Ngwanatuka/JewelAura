@@ -7,6 +7,7 @@ import {
   Favorite as FavoriteIcon,
 } from "@material-ui/icons";
 import styled from "styled-components";
+import Toast from "./Toast";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addProduct } from "../redux/cartRedux";
@@ -100,10 +101,12 @@ const Icon = styled.div`
  * @returns {React.ReactElement} - The Product component.
  */
 const Product = ({ item }) => {
+  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user.currentUser);
-  const favorites = useSelector((state) => state.favorites.products);
+  const user = useSelector((state) => state?.user?.currentUser);
+  const favorites = useSelector((state) => state?.favorites?.products ?? []);
   const [isFavorited, setIsFavorited] = useState(false);
 
   useEffect(() => {
@@ -118,6 +121,8 @@ const Product = ({ item }) => {
       return;
     }
     dispatch(addProduct({ ...item, quantity: 1 }));
+    setToastMessage('Added to cart');
+    setShowToast(true);
   };
 
   const handleAddToFavorites = async () => {
@@ -133,12 +138,16 @@ const Product = ({ item }) => {
         await removeFavorite(user._id, item._id, user.accessToken);
         const { removeFromFavorites } = await import('../redux/favoritesRedux');
         dispatch(removeFromFavorites(item._id));
+        setToastMessage('Removed from favorites');
+        setShowToast(true);
       } else {
         // Add to favorites
         const { addFavorite } = await import('../services/favorites');
         const favorite = await addFavorite(user._id, item._id, user.accessToken);
         const { addToFavorites } = await import('../redux/favoritesRedux');
         dispatch(addToFavorites(favorite));
+        setToastMessage('Added to favorites');
+        setShowToast(true);
       }
     } catch (error) {
       console.error('Error toggling favorite:', error);
@@ -162,6 +171,7 @@ const Product = ({ item }) => {
           {isFavorited ? <FavoriteIcon style={{ color: 'red' }} /> : <FavoriteBorderOutlined />}
         </Icon>
       </Info>
+      {showToast && <Toast message={toastMessage} onClose={() => setShowToast(false)} />}
     </Container>
   );
 };

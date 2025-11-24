@@ -111,9 +111,9 @@ const OrderStatus = styled.div`
   font-size: 14px;
   font-weight: 500;
   background-color: ${(props) =>
-        props.status === "pending" ? "#ffa726" :
-            props.status === "approved" ? "#66bb6a" :
-                "#ef5350"};
+    props.status === "pending" ? "#ffa726" :
+      props.status === "approved" ? "#66bb6a" :
+        "#ef5350"};
   color: white;
 `;
 
@@ -121,6 +121,21 @@ const OrderTotal = styled.div`
   font-size: 20px;
   font-weight: 600;
   color: #333;
+`;
+
+const TrackButton = styled.button`
+  background: #d4af37;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+
+  &:hover {
+    background: #c19b2e;
+  }
 `;
 
 const EmptyMessage = styled.div`
@@ -131,88 +146,91 @@ const EmptyMessage = styled.div`
 `;
 
 const OrderHistory = () => {
-    const user = useSelector((state) => state.user.currentUser);
-    const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const user = useSelector((state) => state.user.currentUser);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchOrders = async () => {
-            if (user) {
-                try {
-                    const data = await getUserOrders(user._id, user.accessToken);
-                    setOrders(data);
-                } catch (error) {
-                    console.error("Error fetching orders:", error);
-                } finally {
-                    setLoading(false);
-                }
-            }
-        };
+  useEffect(() => {
+    const fetchOrders = async () => {
+      if (user) {
+        try {
+          const data = await getUserOrders(user._id, user.accessToken);
+          setOrders(data);
+        } catch (error) {
+          console.error("Error fetching orders:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
 
-        fetchOrders();
-    }, [user]);
+    fetchOrders();
+  }, [user]);
 
-    if (loading) {
-        return (
-            <Container>
-                <Navbar />
-                <Announcement />
-                <Wrapper>
-                    <Title>Loading...</Title>
-                </Wrapper>
-                <Footer />
-            </Container>
-        );
-    }
-
+  if (loading) {
     return (
-        <Container>
-            <Navbar />
-            <Announcement />
-            <Wrapper>
-                <Title>Order History</Title>
-                {orders.length === 0 ? (
-                    <EmptyMessage>
-                        You haven't placed any orders yet. Start shopping!
-                    </EmptyMessage>
-                ) : (
-                    <OrdersContainer>
-                        {orders.map((order) => (
-                            <OrderCard key={order._id}>
-                                <OrderHeader>
-                                    <OrderId>Order #{order._id.slice(-8).toUpperCase()}</OrderId>
-                                    <OrderDate>
-                                        {order.createdAt && format(new Date(order.createdAt), "MMM dd, yyyy")}
-                                    </OrderDate>
-                                </OrderHeader>
-                                <OrderDetails>
-                                    {order.products?.map((item, index) => (
-                                        <OrderItem key={index}>
-                                            <ItemInfo>
-                                                <ItemImage src={item.img || "/placeholder.jpg"} alt={item.title} />
-                                                <ItemDetails>
-                                                    <ItemTitle>{item.title || "Product"}</ItemTitle>
-                                                    <ItemQuantity>Quantity: {item.quantity}</ItemQuantity>
-                                                </ItemDetails>
-                                            </ItemInfo>
-                                            <ItemPrice>${item.price * item.quantity}</ItemPrice>
-                                        </OrderItem>
-                                    ))}
-                                </OrderDetails>
-                                <OrderFooter>
-                                    <OrderStatus status={order.status}>
-                                        {order.status?.toUpperCase() || "PENDING"}
-                                    </OrderStatus>
-                                    <OrderTotal>Total: ${order.amount}</OrderTotal>
-                                </OrderFooter>
-                            </OrderCard>
-                        ))}
-                    </OrdersContainer>
-                )}
-            </Wrapper>
-            <Footer />
-        </Container>
+      <Container>
+        <Navbar />
+        <Announcement />
+        <Wrapper>
+          <Title>Loading...</Title>
+        </Wrapper>
+        <Footer />
+      </Container>
     );
+  }
+
+  return (
+    <Container>
+      <Navbar />
+      <Announcement />
+      <Wrapper>
+        <Title>Order History</Title>
+        {orders.length === 0 ? (
+          <EmptyMessage>
+            You haven't placed any orders yet. Start shopping!
+          </EmptyMessage>
+        ) : (
+          <OrdersContainer>
+            {orders.map((order) => (
+              <OrderCard key={order._id}>
+                <OrderHeader>
+                  <OrderId>Order #{order._id.slice(-8).toUpperCase()}</OrderId>
+                  <OrderDate>
+                    {order.createdAt && format(new Date(order.createdAt), "MMM dd, yyyy")}
+                  </OrderDate>
+                </OrderHeader>
+                <OrderDetails>
+                  {order.products?.map((item, index) => (
+                    <OrderItem key={index}>
+                      <ItemInfo>
+                        <ItemImage src={item.img || "/placeholder.jpg"} alt={item.title} />
+                        <ItemDetails>
+                          <ItemTitle>{item.title || "Product"}</ItemTitle>
+                          <ItemQuantity>Quantity: {item.quantity}</ItemQuantity>
+                        </ItemDetails>
+                      </ItemInfo>
+                      <ItemPrice>${item.price * item.quantity}</ItemPrice>
+                    </OrderItem>
+                  ))}
+                </OrderDetails>
+                <OrderFooter>
+                  <OrderStatus status={order.status}>
+                    {order.status?.toUpperCase() || "PENDING"}
+                  </OrderStatus>
+                  <OrderTotal>Total: ${order.amount}</OrderTotal>
+                  <TrackButton onClick={() => window.location.href = `/orders/${order._id}/tracking`}>
+                    Track Order
+                  </TrackButton>
+                </OrderFooter>
+              </OrderCard>
+            ))}
+          </OrdersContainer>
+        )}
+      </Wrapper>
+      <Footer />
+    </Container>
+  );
 };
 
 export default OrderHistory;

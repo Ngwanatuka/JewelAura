@@ -12,9 +12,9 @@ const Container = styled.div`
   position: sticky;
   top: 0;
   z-index: 999;
-  background-color: ${props => props.scrolled ? "rgba(255, 255, 255, 0.8)" : "var(--bg-main)"};
-  backdrop-filter: ${props => props.scrolled ? "blur(10px)" : "none"};
-  box-shadow: ${props => props.scrolled ? "var(--shadow-md)" : "none"};
+  background-color: ${props => props.$scrolled ? "rgba(255, 255, 255, 0.8)" : "var(--bg-main)"};
+  backdrop-filter: ${props => props.$scrolled ? "blur(10px)" : "none"};
+  box-shadow: ${props => props.$scrolled ? "var(--shadow-md)" : "none"};
   transition: all 0.3s ease;
   ${mobile({ height: "60px" })}
 `;

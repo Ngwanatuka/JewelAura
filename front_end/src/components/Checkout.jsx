@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { processCheckout } from '../services/checkoutService';
+import { userRequest } from '../requestMethods';
 
 const Container = styled.div`
   padding: 20px;
@@ -13,6 +13,7 @@ const Container = styled.div`
 const Title = styled.h1`
   text-align: center;
   margin-bottom: 30px;
+  color: #333;
 `;
 
 const Form = styled.form`
@@ -24,43 +25,104 @@ const Form = styled.form`
 const Section = styled.div`
   border: 1px solid #ddd;
   padding: 20px;
-  border-radius: 5px;
+  border-radius: 8px;
+  background: white;
 `;
 
 const SectionTitle = styled.h3`
   margin-bottom: 15px;
+  color: #333;
 `;
 
 const Input = styled.input`
-  padding: 10px;
+  width: 100%;
+  padding: 12px;
   border: 1px solid #ddd;
-  border-radius: 3px;
+  border-radius: 4px;
   margin-bottom: 10px;
+  font-size: 14px;
+
+  &:focus {
+    outline: none;
+    border-color: #d4af37;
+  }
 `;
 
-const Button = styled.button`
-  padding: 15px;
-  background-color: teal;
+const OrderSummary = styled.div`
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+`;
+
+const SummaryRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 14px;
+`;
+
+const TotalRow = styled(SummaryRow)`
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  padding-top: 10px;
+  border-top: 2px solid #ddd;
+  margin-top: 10px;
+`;
+
+const PayButton = styled.button`
+  padding: 16px;
+  background: linear-gradient(135deg, #d4af37 0%, #c19b2e 100%);
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 18px;
+  font-weight: 600;
+  transition: all 0.3s;
   
   &:hover {
-    background-color: rgb(110, 152, 152);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
   }
+
+  &:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+  }
+`;
+
+const PayFastLogo = styled.div`
+  text-align: center;
+  margin-top: 20px;
+  padding: 15px;
+  background: #f5f5f5;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #666;
+`;
+
+const ErrorMessage = styled.div`
+  background: #fee;
+  color: #c33;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
 `;
 
 const Checkout = () => {
   const [address, setAddress] = useState({
+    firstName: '',
+    lastName: '',
     street: '',
     city: '',
-    state: '',
-    zip: ''
+    province: '',
+    postalCode: ''
   });
   const [loading, setLoading] = useState(false);
-  
+  const [error, setError] = useState('');
+
   const cart = useSelector(state => state.cart);
   const user = useSelector(state => state.user);
   const navigate = useNavigate();
@@ -68,65 +130,122 @@ const Checkout = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
 
     try {
-      const result = await processCheckout({
+      // Initiate PayFast payment
+      const response = await userRequest.post('/payfast/initiate', {
         userId: user.currentUser?._id,
-        products: cart.products,
-        amount: cart.total,
-        address,
-        tokenId: 'tok_test' // In real app, this would come from Stripe
+        address
       });
 
-      if (result.success) {
-        navigate('/success');
+      if (response.data.success) {
+        // Create a form and submit to PayFast
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = response.data.paymentUrl;
+
+        // Add all payment data as hidden fields
+        Object.keys(response.data.paymentData).forEach(key => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = key;
+          input.value = response.data.paymentData[key];
+          form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
       }
     } catch (error) {
       console.error('Checkout failed:', error);
-    } finally {
+      setError(error.response?.data?.error || 'Payment initiation failed. Please try again.');
       setLoading(false);
     }
   };
 
   return (
     <Container>
-      <Title>Checkout</Title>
+      <Title>Secure Checkout</Title>
+
+      {error && <ErrorMessage>{error}</ErrorMessage>}
+
       <Form onSubmit={handleSubmit}>
+        <Section>
+          <SectionTitle>Personal Information</SectionTitle>
+          <Input
+            type="text"
+            placeholder="First Name"
+            value={address.firstName}
+            onChange={(e) => setAddress({ ...address, firstName: e.target.value })}
+            required
+          />
+          <Input
+            type="text"
+            placeholder="Last Name"
+            value={address.lastName}
+            onChange={(e) => setAddress({ ...address, lastName: e.target.value })}
+            required
+          />
+        </Section>
+
         <Section>
           <SectionTitle>Shipping Address</SectionTitle>
           <Input
             type="text"
             placeholder="Street Address"
             value={address.street}
-            onChange={(e) => setAddress({...address, street: e.target.value})}
+            onChange={(e) => setAddress({ ...address, street: e.target.value })}
             required
           />
           <Input
             type="text"
             placeholder="City"
             value={address.city}
-            onChange={(e) => setAddress({...address, city: e.target.value})}
+            onChange={(e) => setAddress({ ...address, city: e.target.value })}
             required
           />
           <Input
             type="text"
-            placeholder="State"
-            value={address.state}
-            onChange={(e) => setAddress({...address, state: e.target.value})}
+            placeholder="Province"
+            value={address.province}
+            onChange={(e) => setAddress({ ...address, province: e.target.value })}
             required
           />
           <Input
             type="text"
-            placeholder="ZIP Code"
-            value={address.zip}
-            onChange={(e) => setAddress({...address, zip: e.target.value})}
+            placeholder="Postal Code"
+            value={address.postalCode}
+            onChange={(e) => setAddress({ ...address, postalCode: e.target.value })}
             required
           />
         </Section>
-        
-        <Button type="submit" disabled={loading}>
-          {loading ? 'Processing...' : 'Place Order'}
-        </Button>
+
+        <OrderSummary>
+          <SectionTitle>Order Summary</SectionTitle>
+          <SummaryRow>
+            <span>Items ({cart.quantity})</span>
+            <span>R{cart.total?.toFixed(2) || '0.00'}</span>
+          </SummaryRow>
+          <SummaryRow>
+            <span>Shipping</span>
+            <span>{cart.total >= 1000 ? 'FREE' : 'R50.00'}</span>
+          </SummaryRow>
+          <TotalRow>
+            <span>Total</span>
+            <span>R{(cart.total + (cart.total >= 1000 ? 0 : 50)).toFixed(2)}</span>
+          </TotalRow>
+        </OrderSummary>
+
+        <PayButton type="submit" disabled={loading || cart.quantity === 0}>
+          {loading ? 'Redirecting to PayFast...' : 'Proceed to Payment'}
+        </PayButton>
+
+        <PayFastLogo>
+          🔒 Secure payment powered by PayFast
+          <br />
+          <small>You will be redirected to PayFast to complete your payment</small>
+        </PayFastLogo>
       </Form>
     </Container>
   );
