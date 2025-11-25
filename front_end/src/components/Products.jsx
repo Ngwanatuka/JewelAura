@@ -6,14 +6,18 @@ import axios from "axios";
 import { mobile } from "../responsive";
 import Skeleton from "./Skeleton";
 const Container = styled.div`
-  width: 90vw;
-  margin: 0 auto;
-  padding: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  ${mobile({ width: "100vw", padding: "10px" })}
-  gap: 20px;
+  width: 100%;
+  max-width: 100%;
+  padding: 20px 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+  
+  ${mobile({
+  gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
+  gap: '20px',
+  padding: '10px 0'
+})}
 `;
 
 /**

@@ -8,7 +8,7 @@ import authRoutes from './routes/auth.js';
 import productRoutes from './routes/product.js';
 import cartRoutes from './routes/cart.js';
 import orderRoutes from './routes/order.js';
-import payfastRoute from './routes/payfast.js';
+import yocoRoute from './routes/yoco.js';
 import favoritesRoute from './routes/favorites.js';
 import reviewRoutes from './routes/review.js';
 import returnRoutes from './routes/return.js';
@@ -16,12 +16,28 @@ import loyaltyRoutes from './routes/loyalty.js';
 
 dotenv.config();
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGO_URL)
-  .then(() => console.log("Connected to MongoDB"))
+// MongoDB Connection with SSL/TLS configuration
+const mongoOptions = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+  ssl: true,
+  tls: true,
+  tlsAllowInvalidCertificates: false,
+  retryWrites: true,
+};
+
+mongoose.connect(process.env.MONGO_URL, mongoOptions)
+  .then(() => console.log("✅ Connected to MongoDB Atlas"))
   .catch((err) => {
-    console.error("MongoDB connection error:", err);
-    process.exit(1);
+    console.error("❌ MongoDB connection error:", err.message);
+    console.log("\n💡 Troubleshooting tips:");
+    console.log("1. Check your MongoDB Atlas connection string in .env");
+    console.log("2. Ensure your IP address is whitelisted in MongoDB Atlas");
+    console.log("3. Verify your database user credentials");
+    console.log("4. Check if MongoDB Atlas cluster is running");
+    // Don't exit - allow app to run for other routes
   });
 
 const app = express();
@@ -74,7 +90,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/carts", cartRoutes);
 app.use("/api/orders", orderRoutes);
-app.use("/api/payfast", payfastRoute);
+app.use("/api/yoco", yocoRoute);
 app.use("/api/favorites", favoritesRoute);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/returns", returnRoutes);

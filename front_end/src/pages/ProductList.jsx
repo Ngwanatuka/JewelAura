@@ -3,163 +3,46 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Announcements from "../components/Announcement";
 import Products from "../components/Products";
-import Newsletter from "../components/Newsletter";
 import { useLocation } from "react-router";
 import { useState } from "react";
-import { Close, FilterList } from "@material-ui/icons";
 
-const Container = styled.div``;
+const Container = styled.div`
+  background: #f8f8f8;
+  min-height: 100vh;
+`;
 
 const Wrapper = styled.div`
   max-width: 1400px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 40px 20px;
   display: flex;
-  gap: 30px;
-  position: relative;
-  overflow-x: hidden;
+  gap: 40px;
 
   @media (max-width: 968px) {
-    padding: 10px;
+    flex-direction: column;
+    padding: 20px 10px;
   }
 `;
 
-const FilterSidebar = styled.div`
-  width: 280px;
-  min-width: 280px;
-  background: white;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  height: fit-content;
-  position: sticky;
-  top: 20px;
-
-  @media (max-width: 968px) {
-    position: fixed;
-    left: ${props => props.isOpen ? '0' : '-100%'};
-    top: 0;
-    height: 100vh;
-    z-index: 1000;
-    transition: left 0.3s ease;
-    overflow-y: auto;
-    min-width: 280px;
-  }
-`;
-
-const Overlay = styled.div`
-  display: none;
-
-  @media (max-width: 968px) {
-    display: ${props => props.isOpen ? 'block' : 'none'};
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-  }
-`;
-
-const MobileFilterButton = styled.button`
-  display: none;
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: linear-gradient(135deg, #d4af37 0%, #c19b2e 100%);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
-  cursor: pointer;
-  z-index: 998;
-  align-items: center;
-  justify-content: center;
-
-  @media (max-width: 968px) {
-    display: flex;
-  }
-`;
-
-const CloseButton = styled.button`
-  display: none;
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #666;
-
-  @media (max-width: 968px) {
-    display: block;
-  }
-`;
-
-const MainContent = styled.div`
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
+const Sidebar = styled.div`
+  width: 250px;
+  min-width: 250px;
 
   @media (max-width: 968px) {
     width: 100%;
   }
 `;
 
-const Header = styled.div`
-  margin-bottom: 30px;
-`;
-
-const Title = styled.h1`
-  font-size: 32px;
-  color: #333;
-  margin-bottom: 10px;
-  text-transform: capitalize;
-`;
-
-const ResultCount = styled.p`
-  color: #666;
-  font-size: 14px;
-`;
-
-const SearchBox = styled.div`
-  margin-bottom: 30px;
-`;
-
-const SearchInput = styled.input`
-  width: 100%;
-  padding: 14px 20px;
-  border: 2px solid #eee;
+const FilterCard = styled.div`
+  background: white;
   border-radius: 8px;
-  font-size: 15px;
-  transition: all 0.3s;
-
-  &:focus {
-    outline: none;
-    border-color: #d4af37;
-    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
-  }
-
-  &::placeholder {
-    color: #999;
-  }
-`;
-
-const FilterSection = styled.div`
-  margin-bottom: 25px;
-  padding-bottom: 25px;
-  border-bottom: 1px solid #f0f0f0;
-
-  &:last-child {
-    border-bottom: none;
-  }
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 `;
 
 const FilterTitle = styled.h3`
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #333;
   margin-bottom: 15px;
@@ -167,42 +50,52 @@ const FilterTitle = styled.h3`
   letter-spacing: 0.5px;
 `;
 
-const FilterOptions = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+const FilterList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
 `;
 
-const FilterButton = styled.button`
-  padding: 10px 16px;
-  border: 2px solid ${props => props.active ? '#d4af37' : '#eee'};
-  background: ${props => props.active ? '#fff9e6' : 'white'};
-  color: ${props => props.active ? '#d4af37' : '#666'};
-  border-radius: 8px;
+const FilterItem = styled.li`
+  padding: 8px 0;
   cursor: pointer;
+  color: ${props => props.active ? '#d4af37' : '#666'};
   font-size: 14px;
-  font-weight: ${props => props.active ? '600' : '400'};
-  transition: all 0.2s;
-  text-align: left;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 
   &:hover {
-    border-color: #d4af37;
-    background: #fff9e6;
+    color: #d4af37;
   }
+
+  &::before {
+    content: ${props => props.active ? '"●"' : '"○"'};
+    color: ${props => props.active ? '#d4af37' : '#ccc'};
+    font-size: 12px;
+  }
+`;
+
+const PriceRangeSlider = styled.div`
+  padding: 10px 0;
 `;
 
 const PriceInputs = styled.div`
   display: flex;
   gap: 10px;
-  align-items: center;
+  margin-top: 15px;
+  width: 100%;
 `;
 
 const PriceInput = styled.input`
   flex: 1;
-  padding: 10px;
-  border: 2px solid #eee;
-  border-radius: 6px;
-  font-size: 14px;
+  min-width: 0;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  box-sizing: border-box;
 
   &:focus {
     outline: none;
@@ -210,55 +103,92 @@ const PriceInput = styled.input`
   }
 `;
 
-const PriceSeparator = styled.span`
+const PriceLabel = styled.div`
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
   color: #999;
-  font-weight: 600;
+  margin-bottom: 5px;
 `;
 
-const SortSection = styled.div`
-  background: #f9f9f9;
-  padding: 15px;
+const MainContent = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
+const Header = styled.div`
+  background: white;
+  padding: 30px;
   border-radius: 8px;
+  margin-bottom: 30px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+`;
+
+const Title = styled.h1`
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 8px;
+  font-weight: 400;
+`;
+
+const Subtitle = styled.p`
+  color: #666;
+  font-size: 14px;
   margin-bottom: 20px;
 `;
 
-const SortLabel = styled.label`
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 8px;
-  display: block;
+const TopBar = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
 `;
 
-const SortSelect = styled.select`
-  width: 100%;
-  padding: 10px;
-  border: 2px solid #eee;
-  border-radius: 6px;
+const SearchInput = styled.input`
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   font-size: 14px;
-  cursor: pointer;
-  background: white;
 
   &:focus {
     outline: none;
     border-color: #d4af37;
   }
+
+  &::placeholder {
+    color: #999;
+  }
 `;
 
-const ClearButton = styled.button`
-  width: 100%;
-  padding: 12px;
-  background: #f5f5f5;
-  border: none;
-  border-radius: 6px;
+const SortSelect = styled.select`
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  background: white;
+  min-width: 200px;
+
+  &:focus {
+    outline: none;
+    border-color: #d4af37;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`;
+
+const ResultInfo = styled.div`
   color: #666;
   font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    background: #e0e0e0;
-  }
+  margin-top: 15px;
 `;
 
 const ProductList = () => {
@@ -268,7 +198,6 @@ const ProductList = () => {
   const [sort, setSort] = useState("newest");
   const [searchQuery, setSearchQuery] = useState("");
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleFilterClick = (filterType, value) => {
     setFilters(prev => ({
@@ -284,15 +213,21 @@ const ProductList = () => {
     });
   };
 
-  const clearAllFilters = () => {
-    setFilters({});
-    setSearchQuery("");
-    setPriceRange({ min: "", max: "" });
-    setSort("newest");
-  };
+  const categories = [
+    { name: "All Categories", value: "" },
+    { name: "Rings", value: "rings" },
+    { name: "Necklaces", value: "necklaces" },
+    { name: "Earrings", value: "earrings" },
+    { name: "Bracelets", value: "bracelets" }
+  ];
 
-  const colors = ["Gold", "Silver", "Black", "Rose Gold", "White Gold"];
-  const sizes = ["Small", "Medium", "Large", "XL"];
+  const materials = [
+    { name: "All Materials", value: "" },
+    { name: "18k White Gold", value: "White Gold" },
+    { name: "18k Yellow Gold", value: "Gold" },
+    { name: "14k Yellow Gold", value: "Gold" },
+    { name: "Sterling Silver", value: "Silver" }
+  ];
 
   return (
     <Container>
@@ -300,93 +235,86 @@ const ProductList = () => {
       <Navbar />
 
       <Wrapper>
-        <Overlay isOpen={isSidebarOpen} onClick={() => setIsSidebarOpen(false)} />
-
-        <FilterSidebar isOpen={isSidebarOpen}>
-          <CloseButton onClick={() => setIsSidebarOpen(false)}>
-            <Close />
-          </CloseButton>
-
-          <FilterTitle>Search</FilterTitle>
-          <SearchBox>
-            <SearchInput
-              type="text"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </SearchBox>
-
-          <FilterSection>
-            <FilterTitle>Color</FilterTitle>
-            <FilterOptions>
-              {colors.map(color => (
-                <FilterButton
-                  key={color}
-                  active={filters.color === color}
-                  onClick={() => handleFilterClick('color', color)}
+        <Sidebar>
+          <FilterCard>
+            <FilterTitle>Category</FilterTitle>
+            <FilterList>
+              {categories.map(category => (
+                <FilterItem
+                  key={category.value}
+                  active={cat === category.value || (!cat && !category.value)}
+                  onClick={() => window.location.href = `/products/${category.value}`}
                 >
-                  {color}
-                </FilterButton>
+                  {category.name}
+                </FilterItem>
               ))}
-            </FilterOptions>
-          </FilterSection>
+            </FilterList>
+          </FilterCard>
 
-          <FilterSection>
-            <FilterTitle>Size</FilterTitle>
-            <FilterOptions>
-              {sizes.map(size => (
-                <FilterButton
-                  key={size}
-                  active={filters.size === size}
-                  onClick={() => handleFilterClick('size', size)}
+          <FilterCard>
+            <FilterTitle>Material</FilterTitle>
+            <FilterList>
+              {materials.map(material => (
+                <FilterItem
+                  key={material.value}
+                  active={filters.color === material.value}
+                  onClick={() => handleFilterClick('color', material.value)}
                 >
-                  {size}
-                </FilterButton>
+                  {material.name}
+                </FilterItem>
               ))}
-            </FilterOptions>
-          </FilterSection>
+            </FilterList>
+          </FilterCard>
 
-          <FilterSection>
-            <FilterTitle>Price Range (ZAR)</FilterTitle>
-            <PriceInputs>
-              <PriceInput
-                type="number"
-                name="min"
-                placeholder="Min"
-                value={priceRange.min}
-                onChange={handlePriceChange}
-              />
-              <PriceSeparator>-</PriceSeparator>
-              <PriceInput
-                type="number"
-                name="max"
-                placeholder="Max"
-                value={priceRange.max}
-                onChange={handlePriceChange}
-              />
-            </PriceInputs>
-          </FilterSection>
-
-          <ClearButton onClick={clearAllFilters}>
-            Clear All Filters
-          </ClearButton>
-        </FilterSidebar>
+          <FilterCard>
+            <FilterTitle>Price Range</FilterTitle>
+            <PriceRangeSlider>
+              <PriceLabel>
+                <span>R{priceRange.min || '0.00'}</span>
+                <span>R{priceRange.max || '4,000.00'}</span>
+              </PriceLabel>
+              <PriceInputs>
+                <PriceInput
+                  type="number"
+                  name="min"
+                  placeholder="Min"
+                  value={priceRange.min}
+                  onChange={handlePriceChange}
+                />
+                <PriceInput
+                  type="number"
+                  name="max"
+                  placeholder="Max"
+                  value={priceRange.max}
+                  onChange={handlePriceChange}
+                />
+              </PriceInputs>
+            </PriceRangeSlider>
+          </FilterCard>
+        </Sidebar>
 
         <MainContent>
           <Header>
-            <Title>{cat || "All Products"}</Title>
-            <ResultCount>Showing all available products</ResultCount>
-          </Header>
+            <Title>Shop Collection</Title>
+            <Subtitle>Explore our curated selection of fine jewelry</Subtitle>
 
-          <SortSection>
-            <SortLabel>Sort by:</SortLabel>
-            <SortSelect value={sort} onChange={(e) => setSort(e.target.value)}>
-              <option value="newest">Newest Arrivals</option>
-              <option value="price-asc">Price: Low to High</option>
-              <option value="price-desc">Price: High to Low</option>
-            </SortSelect>
-          </SortSection>
+            <TopBar>
+              <SearchInput
+                type="text"
+                placeholder="Search jewelry..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+
+              <SortSelect value={sort} onChange={(e) => setSort(e.target.value)}>
+                <option value="newest">Name</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+              </SortSelect>
+            </TopBar>
+
+            <ResultInfo>Showing 6 items</ResultInfo>
+          </Header>
 
           <Products
             cat={cat}
@@ -396,13 +324,8 @@ const ProductList = () => {
             priceRange={priceRange}
           />
         </MainContent>
-
-        <MobileFilterButton onClick={() => setIsSidebarOpen(true)}>
-          <FilterList />
-        </MobileFilterButton>
       </Wrapper>
 
-      <Newsletter />
       <Footer />
     </Container>
   );

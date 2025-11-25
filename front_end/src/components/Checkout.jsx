@@ -72,7 +72,7 @@ const TotalRow = styled(SummaryRow)`
 
 const PayButton = styled.button`
   padding: 16px;
-  background: linear-gradient(135deg, #d4af37 0%, #c19b2e 100%);
+  background: linear-gradient(135deg, #00a9e0 0%, #0088b8 100%);
   color: white;
   border: none;
   border-radius: 6px;
@@ -83,7 +83,7 @@ const PayButton = styled.button`
   
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 169, 224, 0.4);
   }
 
   &:disabled {
@@ -93,7 +93,7 @@ const PayButton = styled.button`
   }
 `;
 
-const PayFastLogo = styled.div`
+const YocoLogo = styled.div`
   text-align: center;
   margin-top: 20px;
   padding: 15px;
@@ -133,29 +133,15 @@ const Checkout = () => {
     setError('');
 
     try {
-      // Initiate PayFast payment
-      const response = await userRequest.post('/payfast/initiate', {
+      // Create Yoco checkout session
+      const response = await userRequest.post('/yoco/create-checkout', {
         userId: user.currentUser?._id,
         address
       });
 
       if (response.data.success) {
-        // Create a form and submit to PayFast
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = response.data.paymentUrl;
-
-        // Add all payment data as hidden fields
-        Object.keys(response.data.paymentData).forEach(key => {
-          const input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = key;
-          input.value = response.data.paymentData[key];
-          form.appendChild(input);
-        });
-
-        document.body.appendChild(form);
-        form.submit();
+        // Redirect to Yoco checkout page
+        window.location.href = response.data.checkoutUrl;
       }
     } catch (error) {
       console.error('Checkout failed:', error);
@@ -238,14 +224,14 @@ const Checkout = () => {
         </OrderSummary>
 
         <PayButton type="submit" disabled={loading || cart.quantity === 0}>
-          {loading ? 'Redirecting to PayFast...' : 'Proceed to Payment'}
+          {loading ? 'Redirecting to Yoco...' : 'Proceed to Payment'}
         </PayButton>
 
-        <PayFastLogo>
-          🔒 Secure payment powered by PayFast
+        <YocoLogo>
+          🔒 Secure payment powered by Yoco
           <br />
-          <small>You will be redirected to PayFast to complete your payment</small>
-        </PayFastLogo>
+          <small>You will be redirected to Yoco to complete your payment</small>
+        </YocoLogo>
       </Form>
     </Container>
   );
