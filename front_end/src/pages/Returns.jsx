@@ -264,7 +264,7 @@ const Returns = () => {
                                     <option value="">Choose an order...</option>
                                     {orders.map((order) => (
                                         <option key={order._id} value={order._id}>
-                                            Order #{order._id.slice(-8).toUpperCase()} - $
+                                            Order #{order._id.slice(-8).toUpperCase()} - R
                                             {order.amount.toFixed(2)} ({new Date(order.createdAt).toLocaleDateString()})
                                         </option>
                                     ))}
@@ -333,7 +333,7 @@ const Returns = () => {
                                     </ReturnInfo>
                                     {returnItem.refundAmount && (
                                         <ReturnInfo>
-                                            <strong>Refund Amount:</strong> ${returnItem.refundAmount.toFixed(2)}
+                                            <strong>Refund Amount:</strong> R{returnItem.refundAmount.toFixed(2)}
                                         </ReturnInfo>
                                     )}
                                     {returnItem.adminNotes && (

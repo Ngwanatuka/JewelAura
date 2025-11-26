@@ -76,27 +76,48 @@ router.get("/", verifyTokenAndAdmin, async (req, res) => {
 // GET MONTHLY INCOME
 
 router.get("/income", verifyTokenAndAdmin, async (req, res) => {
-  const date = new Date();
-  const lastMonth = new Date(date.setMonth(date.getMonth() - 1));
-  const previousMonth = new Date(new Date().setMonth(lastMonth.getMonth() - 1));
   try {
+    const date = new Date();
+    const currentMonth = date.getMonth() + 1; // 1-12
+    const currentYear = date.getFullYear();
+
+    // Get last 2 months of data
+    const twoMonthsAgo = new Date(date.getFullYear(), date.getMonth() - 2, 1);
+
     const income = await Order.aggregate([
-      { $match: { createdAt: { $gte: previousMonth } } },
+      {
+        $match: {
+          createdAt: { $gte: twoMonthsAgo },
+          status: { $in: ['pending', 'completed'] } // Include both pending and completed
+        }
+      },
       {
         $project: {
           month: { $month: "$createdAt" },
+          year: { $year: "$createdAt" },
           sales: "$amount",
         },
       },
       {
         $group: {
-          _id: "$month",
+          _id: { month: "$month", year: "$year" },
           total: { $sum: "$sales" },
         },
       },
+      {
+        $sort: { "_id.year": -1, "_id.month": -1 }
+      },
+      {
+        $project: {
+          _id: "$_id.month",
+          total: 1
+        }
+      }
     ]);
+
     res.status(200).json(income);
   } catch (err) {
+    console.error('Income API error:', err);
     res.status(500).json(err);
   }
 });

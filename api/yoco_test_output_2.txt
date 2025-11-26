@@ -1,0 +1,7 @@
+🔑 Found YOCO_SECRET_KEY: sk_test_...
+🔄 Testing Yoco API connection...
+✅ Yoco API Connection Successful!
+📝 Checkout ID: ch_ngopepjeKzXIl46F6yGHPqox
+🔗 Redirect URL: https://c.yoco.com/checkout/ch_ngopepjeKzXIl46F6yGHPqox
+
+✨ The keys are working correctly.

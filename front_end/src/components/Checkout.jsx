@@ -136,7 +136,11 @@ const Checkout = () => {
       // Create Yoco checkout session
       const response = await userRequest.post('/yoco/create-checkout', {
         userId: user.currentUser?._id,
-        address
+        address,
+        cart: {
+          products: cart.products,
+          total: cart.total
+        }
       });
 
       if (response.data.success) {

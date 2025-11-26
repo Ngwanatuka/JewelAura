@@ -71,14 +71,18 @@ const Sidebar = () => {
                                 Home
                             </ListItem>
                         </Link>
-                        <ListItem>
-                            <Timeline style={{ marginRight: "5px", fontSize: "20px" }} />
-                            Analytics
-                        </ListItem>
-                        <ListItem>
-                            <TrendingUp style={{ marginRight: "5px", fontSize: "20px" }} />
-                            Sales
-                        </ListItem>
+                        <Link to="/admin/analytics" style={{ textDecoration: "none", color: "inherit" }}>
+                            <ListItem active={path === "/admin/analytics"}>
+                                <Timeline style={{ marginRight: "5px", fontSize: "20px" }} />
+                                Analytics
+                            </ListItem>
+                        </Link>
+                        <Link to="/admin/sales" style={{ textDecoration: "none", color: "inherit" }}>
+                            <ListItem active={path === "/admin/sales"}>
+                                <TrendingUp style={{ marginRight: "5px", fontSize: "20px" }} />
+                                Sales
+                            </ListItem>
+                        </Link>
                     </List>
                 </Menu>
                 <Menu>

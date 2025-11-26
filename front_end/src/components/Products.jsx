@@ -48,12 +48,14 @@ const Products = ({ cat, filters, sort, searchQuery, priceRange }) => {
         if (priceRange?.max) params.append('maxPrice', priceRange.max);
 
         // Add other filters (color, size)
-        Object.entries(filters).forEach(([key, value]) => {
-          if (value) params.append(key, value);
-        });
+        if (filters) {
+          Object.entries(filters).forEach(([key, value]) => {
+            if (value) params.append(key, value);
+          });
+        }
 
         const queryString = params.toString();
-        const url = `http://localhost:5000/api/products${queryString ? `?${queryString}` : ''}`;
+        const url = `/api/products${queryString ? `?${queryString}` : ''}`;
 
         const res = await axios.get(url);
         setProducts(res.data);

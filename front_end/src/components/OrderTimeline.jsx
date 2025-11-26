@@ -57,7 +57,7 @@ const Description = styled.p`
   font-size: 14px;
 `;
 
-const Date = styled.span`
+const DateText = styled.span`
   color: #999;
   font-size: 12px;
   display: block;
@@ -133,7 +133,7 @@ const OrderTimeline = ({ order }) => {
                         <Title completed={step.completed}>{step.title}</Title>
                         <Description>{step.description}</Description>
                         {step.date && step.completed && (
-                            <Date>{new Date(step.date).toLocaleDateString()}</Date>
+                            <DateText>{new Date(step.date).toLocaleDateString()}</DateText>
                         )}
                     </Content>
                 </TimelineItem>

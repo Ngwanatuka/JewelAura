@@ -10,21 +10,29 @@ const router = express.Router();
 
 // Yoco API configuration
 const YOCO_API_URL = process.env.YOCO_MODE === 'live'
-    ? 'https://online.yoco.com/v1'
-    : 'https://online.yoco.com/v1'; // Yoco uses same URL for both
+    ? 'https://payments.yoco.com/api'
+    : 'https://payments.yoco.com/api'; // Yoco uses same URL for both
 
 // Create checkout session
 router.post('/create-checkout', async (req, res) => {
     try {
-        const { userId, address } = req.body;
+        const { userId, address, cart: requestCart } = req.body;
 
         if (!userId || !address) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
-        // Get user's cart
-        const cart = await Cart.findOne({ userId });
-        if (!cart || cart.products.length === 0) {
+        let cart;
+
+        // Use cart from request if provided (for frontend Redux state)
+        if (requestCart && requestCart.products && requestCart.products.length > 0) {
+            cart = requestCart;
+        } else {
+            // Fallback to database cart
+            cart = await Cart.findOne({ userId });
+        }
+
+        if (!cart || !cart.products || cart.products.length === 0) {
             return res.status(400).json({ error: 'Cart is empty' });
         }
 

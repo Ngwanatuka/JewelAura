@@ -81,10 +81,20 @@ const AdminHome = () => {
             try {
                 const res = await getIncome();
                 setIncome(res);
-                if (res.length > 1) {
-                    setPerc((res[1].total * 100) / res[0].total - 100);
+
+                // Calculate percentage change
+                if (res.length >= 2 && res[1]?.total && res[0]?.total) {
+                    const percentChange = ((res[0].total - res[1].total) / res[1].total) * 100;
+                    setPerc(percentChange);
+                } else if (res.length === 1 && res[0]?.total) {
+                    // Only current month data
+                    setPerc(100); // 100% increase from 0
+                } else {
+                    setPerc(0);
                 }
-            } catch { }
+            } catch (err) {
+                console.error('Failed to fetch income:', err);
+            }
         };
         getIncomeData();
     }, []);
@@ -95,7 +105,7 @@ const AdminHome = () => {
                 <FeaturedItem>
                     <FeaturedTitle>Revenue</FeaturedTitle>
                     <FeaturedMoneyContainer>
-                        <FeaturedMoney>${income[1]?.total || 0}</FeaturedMoney>
+                        <FeaturedMoney>R{income[0]?.total || 0}</FeaturedMoney>
                         <FeaturedMoneyRate>
                             %{Math.floor(perc)}{" "}
                             {perc < 0 ? (
@@ -108,24 +118,26 @@ const AdminHome = () => {
                     <FeaturedSub>Compared to last month</FeaturedSub>
                 </FeaturedItem>
                 <FeaturedItem>
-                    <FeaturedTitle>Sales</FeaturedTitle>
+                    <FeaturedTitle>Last Month Sales</FeaturedTitle>
                     <FeaturedMoneyContainer>
-                        <FeaturedMoney>$4,415</FeaturedMoney>
+                        <FeaturedMoney>R{income[1]?.total || 0}</FeaturedMoney>
                         <FeaturedMoneyRate>
-                            -1.4 <ArrowDownward style={{ fontSize: "14px", color: "red" }} />
+                            %{Math.floor(perc)}{" "}
+                            {perc < 0 ? (
+                                <ArrowDownward style={{ fontSize: "14px", color: "red" }} />
+                            ) : (
+                                <ArrowUpward style={{ fontSize: "14px", color: "green" }} />
+                            )}
                         </FeaturedMoneyRate>
                     </FeaturedMoneyContainer>
                     <FeaturedSub>Compared to last month</FeaturedSub>
                 </FeaturedItem>
                 <FeaturedItem>
-                    <FeaturedTitle>Cost</FeaturedTitle>
+                    <FeaturedTitle>Total Orders</FeaturedTitle>
                     <FeaturedMoneyContainer>
-                        <FeaturedMoney>$2,225</FeaturedMoney>
-                        <FeaturedMoneyRate>
-                            +2.4 <ArrowUpward style={{ fontSize: "14px", color: "green" }} />
-                        </FeaturedMoneyRate>
+                        <FeaturedMoney>{userStats.length} months</FeaturedMoney>
                     </FeaturedMoneyContainer>
-                    <FeaturedSub>Compared to last month</FeaturedSub>
+                    <FeaturedSub>User activity tracked</FeaturedSub>
                 </FeaturedItem>
             </Featured>
             {/* Chart component could go here */}

@@ -23,6 +23,8 @@ import AdminProductList from "./pages/admin/ProductList";
 import UserList from "./pages/admin/UserList";
 import OrderList from "./pages/admin/OrderList";
 import NewProduct from "./pages/admin/NewProduct";
+import Analytics from "./pages/admin/Analytics";
+import Sales from "./pages/admin/Sales";
 import { StyleSheetManager } from "styled-components";
 
 export const App = () => {
@@ -50,6 +52,8 @@ export const App = () => {
       element: isAdmin ? <AdminLayout /> : <Navigate to="/" />,
       children: [
         { path: "", element: <AdminHome /> },
+        { path: "analytics", element: <Analytics /> },
+        { path: "sales", element: <Sales /> },
         { path: "products", element: <AdminProductList /> },
         { path: "newproduct", element: <NewProduct /> },
         { path: "users", element: <UserList /> },

@@ -109,91 +109,91 @@ const EmptyMessage = styled.div`
 `;
 
 const Favorites = () => {
-    const user = useSelector((state) => state.user.currentUser);
-    const favorites = useSelector((state) => state.favorites.products);
-    const dispatch = useDispatch();
-    const [loading, setLoading] = useState(true);
+  const user = useSelector((state) => state.user.currentUser);
+  const favorites = useSelector((state) => state.favorites.products);
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchFavorites = async () => {
-            if (user) {
-                try {
-                    const data = await getFavorites(user._id, user.accessToken);
-                    dispatch(setFavorites(data));
-                } catch (error) {
-                    console.error("Error fetching favorites:", error);
-                } finally {
-                    setLoading(false);
-                }
-            }
-        };
-
-        fetchFavorites();
-    }, [user, dispatch]);
-
-    const handleRemoveFromFavorites = async (productId) => {
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      if (user) {
         try {
-            await removeFavorite(user._id, productId, user.accessToken);
-            dispatch(removeFromFavorites(productId));
+          const data = await getFavorites(user._id, user.accessToken);
+          dispatch(setFavorites(data));
         } catch (error) {
-            console.error("Error removing from favorites:", error);
+          console.error("Error fetching favorites:", error);
+        } finally {
+          setLoading(false);
         }
+      }
     };
 
-    const handleAddToCart = (product) => {
-        dispatch(addProduct({ ...product.product, quantity: 1 }));
-    };
+    fetchFavorites();
+  }, [user, dispatch]);
 
-    if (loading) {
-        return (
-            <Container>
-                <Navbar />
-                <Announcement />
-                <Wrapper>
-                    <Title>Loading...</Title>
-                </Wrapper>
-                <Footer />
-            </Container>
-        );
+  const handleRemoveFromFavorites = async (productId) => {
+    try {
+      await removeFavorite(user._id, productId, user.accessToken);
+      dispatch(removeFromFavorites(productId));
+    } catch (error) {
+      console.error("Error removing from favorites:", error);
     }
+  };
 
+  const handleAddToCart = (product) => {
+    dispatch(addProduct({ ...product.product, quantity: 1 }));
+  };
+
+  if (loading) {
     return (
-        <Container>
-            <Navbar />
-            <Announcement />
-            <Wrapper>
-                <Title>My Favorites</Title>
-                {favorites.length === 0 ? (
-                    <EmptyMessage>
-                        You haven't added any favorites yet. Start browsing our products!
-                    </EmptyMessage>
-                ) : (
-                    <ProductsContainer>
-                        {favorites.map((item) => (
-                            <ProductCard key={item._id}>
-                                <ProductImage src={item.product?.img} alt={item.product?.title} />
-                                <ProductInfo>
-                                    <ProductTitle>{item.product?.title}</ProductTitle>
-                                    <ProductPrice>${item.product?.price}</ProductPrice>
-                                </ProductInfo>
-                                <ButtonContainer>
-                                    <AddToCartButton onClick={() => handleAddToCart(item)}>
-                                        <ShoppingCartOutlined />
-                                        Add to Cart
-                                    </AddToCartButton>
-                                    <RemoveButton onClick={() => handleRemoveFromFavorites(item.productId)}>
-                                        <FavoriteBorderOutlined />
-                                        Remove
-                                    </RemoveButton>
-                                </ButtonContainer>
-                            </ProductCard>
-                        ))}
-                    </ProductsContainer>
-                )}
-            </Wrapper>
-            <Footer />
-        </Container>
+      <Container>
+        <Navbar />
+        <Announcement />
+        <Wrapper>
+          <Title>Loading...</Title>
+        </Wrapper>
+        <Footer />
+      </Container>
     );
+  }
+
+  return (
+    <Container>
+      <Navbar />
+      <Announcement />
+      <Wrapper>
+        <Title>My Favorites</Title>
+        {favorites.length === 0 ? (
+          <EmptyMessage>
+            You haven't added any favorites yet. Start browsing our products!
+          </EmptyMessage>
+        ) : (
+          <ProductsContainer>
+            {favorites.map((item) => (
+              <ProductCard key={item._id}>
+                <ProductImage src={item.product?.img} alt={item.product?.title} />
+                <ProductInfo>
+                  <ProductTitle>{item.product?.title}</ProductTitle>
+                  <ProductPrice>R{item.product?.price}</ProductPrice>
+                </ProductInfo>
+                <ButtonContainer>
+                  <AddToCartButton onClick={() => handleAddToCart(item)}>
+                    <ShoppingCartOutlined />
+                    Add to Cart
+                  </AddToCartButton>
+                  <RemoveButton onClick={() => handleRemoveFromFavorites(item.productId)}>
+                    <FavoriteBorderOutlined />
+                    Remove
+                  </RemoveButton>
+                </ButtonContainer>
+              </ProductCard>
+            ))}
+          </ProductsContainer>
+        )}
+      </Wrapper>
+      <Footer />
+    </Container>
+  );
 };
 
 export default Favorites;

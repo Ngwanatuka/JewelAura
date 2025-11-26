@@ -210,7 +210,7 @@ const OrderHistory = () => {
                           <ItemQuantity>Quantity: {item.quantity}</ItemQuantity>
                         </ItemDetails>
                       </ItemInfo>
-                      <ItemPrice>${item.price * item.quantity}</ItemPrice>
+                      <ItemPrice>R{item.price * item.quantity}</ItemPrice>
                     </OrderItem>
                   ))}
                 </OrderDetails>
@@ -218,7 +218,7 @@ const OrderHistory = () => {
                   <OrderStatus status={order.status}>
                     {order.status?.toUpperCase() || "PENDING"}
                   </OrderStatus>
-                  <OrderTotal>Total: ${order.amount}</OrderTotal>
+                  <OrderTotal>Total: R{order.amount}</OrderTotal>
                   <TrackButton onClick={() => window.location.href = `/orders/${order._id}/tracking`}>
                     Track Order
                   </TrackButton>
