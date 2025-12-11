@@ -167,11 +167,19 @@ router.get('/verify/:orderId', async (req, res) => {
         }
 
         res.status(200).json({
+            success: true,
             orderId: order._id,
             status: order.status,
             amount: order.amount,
+            products: order.products,
+            address: order.address,
+            deliveryStatus: order.deliveryStatus,
+            trackingNumber: order.trackingNumber,
+            estimatedDelivery: order.estimatedDelivery,
+            createdAt: order.createdAt,
         });
     } catch (error) {
+        console.error('Payment verification error:', error);
         res.status(500).json({ error: error.message });
     }
 });

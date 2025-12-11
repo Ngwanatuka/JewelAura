@@ -39,6 +39,7 @@ services:
     volumes:
       - ./front_end:/app
       - /app/node_modules
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
     restart: unless-stopped
 
 volumes:

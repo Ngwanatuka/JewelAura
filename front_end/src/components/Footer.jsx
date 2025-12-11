@@ -147,15 +147,15 @@ const Footer = () => {
       <Right>
         <Title>Contact</Title>
         <ContactItem>
-          <Room style={{ marginRight: "10px", color: "var(--primary)" }} /> 622 Dixie Path, South Tobinchester 98336
+          <Room style={{ marginRight: "10px", color: "var(--primary)" }} /> Midrand, Joannesburg
         </ContactItem>
         <ContactItem>
-          <Phone style={{ marginRight: "10px", color: "var(--primary)" }} /> +1 234 56 78
+          <Phone style={{ marginRight: "10px", color: "var(--primary)" }} /> 0647958934
         </ContactItem>
         <ContactItem>
-          <MailOutline style={{ marginRight: "10px", color: "var(--primary)" }} /> contact@jewelaura.com
+          <MailOutline style={{ marginRight: "10px", color: "var(--primary)" }} /> ngwanatuka@gmail.com
         </ContactItem>
-        <Payment src="https://i.ibb.co/Qfvn4z6/payment.png" />
+        <Payment src="/yoco_payment_methods.png" />
       </Right>
     </Container>
   );

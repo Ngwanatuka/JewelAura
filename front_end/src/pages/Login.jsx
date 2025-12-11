@@ -11,7 +11,7 @@ const Container = styled.div`
       rgba(255, 255, 255, 0.12),
       rgba(255, 255, 255, 0.5)
     ),
-    url("https://images.pexels.com/photos/3829444/pexels-photo-3829444.jpeg?auto=compress&cs=tinysrgb&w=600")
+    url("/login_background.png")
       center;
   background-size: cover;
   display: flex;
