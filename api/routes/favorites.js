@@ -11,24 +11,24 @@ router.post("/", verifyTokenAndAuthorization, async (req, res) => {
         const { userId, productId } = req.body;
 
         if (!userId || !productId) {
-            return res.status(400).json({ message: "userId and productId are required" });
+            return res.status(400).json({ error: "userId and productId are required" });
         }
 
         // Check if product exists
         const product = await Product.findById(productId);
         if (!product) {
-            return res.status(404).json({ message: "Product not found" });
+            return res.status(404).json({ error: "Product not found" });
         }
 
         // Check if already favorited
         const existingFavorite = await Favorite.findOne({ userId, productId });
         if (existingFavorite) {
-            return res.status(400).json({ message: "Product already in favorites" });
+            return res.status(400).json({ error: "Product already in favorites" });
         }
 
         const newFavorite = new Favorite({ userId, productId });
         const savedFavorite = await newFavorite.save();
-        res.status(201).json(savedFavorite);
+        res.status(200).json(savedFavorite);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -69,10 +69,10 @@ router.delete("/:userId/:productId", verifyTokenAndAuthorization, async (req, re
         const favorite = await Favorite.findOneAndDelete({ userId, productId });
 
         if (!favorite) {
-            return res.status(404).json({ message: "Favorite not found" });
+            return res.status(404).json({ error: "Favorite not found" });
         }
 
-        res.status(200).json({ message: "Removed from favorites" });
+        res.status(200).json({ message: "Favorite removed successfully" });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

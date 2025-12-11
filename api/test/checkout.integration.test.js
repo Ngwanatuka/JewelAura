@@ -30,6 +30,28 @@ jest.mock('../models/Order.js', () => {
   }));
 });
 
+jest.mock('../models/LoyaltyPoints.js', () => {
+  const mockSave = jest.fn().mockResolvedValue();
+  const mockAddTransaction = jest.fn();
+  const mockConstructor = jest.fn().mockImplementation(() => ({
+    save: mockSave,
+    addTransaction: mockAddTransaction,
+    points: 100
+  }));
+  mockConstructor.findOne = jest.fn().mockResolvedValue(null);
+  return mockConstructor;
+});
+
+jest.mock('../services/emailService.js', () => ({
+  sendEmail: jest.fn().mockResolvedValue()
+}));
+
+jest.mock('../routes/loyalty.js', () => ({
+  POINTS_CONFIG: {
+    pointsPerDollar: 1
+  }
+}));
+
 describe('Checkout Integration', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -38,7 +60,7 @@ describe('Checkout Integration', () => {
   it('should complete full checkout process', async () => {
     const Cart = require('../models/Cart.js');
     const Order = require('../models/Order.js');
-    
+
     Cart.findOne.mockResolvedValue({
       userId: 'user123',
       products: [{ productId: 'prod1', quantity: 2 }],

@@ -107,28 +107,20 @@ describe('Favorites API', () => {
                 {
                     _id: 'fav1',
                     userId: 'test-user-id',
-                    productId: 'product1',
-                    populate: jest.fn().mockResolvedValue({
-                        _id: 'fav1',
-                        productId: {
-                            _id: 'product1',
-                            title: 'Gold Bracelet',
-                            price: 299
-                        }
-                    })
+                    productId: 'product1'
                 }
             ];
 
-            Favorite.find = jest.fn().mockReturnValue({
-                populate: jest.fn().mockResolvedValue(mockFavorites.map(f => ({
-                    _id: f._id,
-                    productId: {
-                        _id: 'product1',
-                        title: 'Gold Bracelet',
-                        price: 299
-                    }
-                })))
-            });
+            const mockProducts = [
+                {
+                    _id: 'product1',
+                    title: 'Gold Bracelet',
+                    price: 299
+                }
+            ];
+
+            Favorite.find = jest.fn().mockResolvedValue(mockFavorites);
+            Product.find = jest.fn().mockResolvedValue(mockProducts);
 
             const response = await request(app)
                 .get('/api/favorites/test-user-id');
