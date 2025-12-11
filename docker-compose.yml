@@ -31,7 +31,7 @@ services:
     image: ngwanatuka/jewelaura-frontend:1.1.0
     build: ./front_end
     ports:
-      - "3000:3000"
+      - "3000:80"
     environment:
       - VITE_API_URL=http://localhost:5000
     depends_on:

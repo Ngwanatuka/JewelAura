@@ -15,8 +15,8 @@ ENV=$1
 case $ENV in
     "dev")
         echo "📦 Deploying to development environment..."
-        docker-compose down
-        docker-compose up --build -d
+        docker compose down
+        docker compose up --build -d
         echo "✅ Development deployment complete!"
         echo "🌐 Frontend: http://localhost:3000"
         echo "🔧 Backend: http://localhost:5000"
@@ -39,9 +39,9 @@ case $ENV in
             exit 1
         fi
         
-        docker-compose -f docker-compose.prod.yml down
-        docker-compose -f docker-compose.prod.yml pull
-        docker-compose -f docker-compose.prod.yml up -d
+        docker compose -f docker-compose.prod.yml down
+        docker compose -f docker-compose.prod.yml pull
+        docker compose -f docker-compose.prod.yml up -d
         echo "✅ Production deployment complete!"
         echo "🌐 Application: http://localhost"
         ;;

@@ -17,14 +17,19 @@ import loyaltyRoutes from './routes/loyalty.js';
 dotenv.config();
 
 // MongoDB Connection with SSL/TLS configuration
+// MongoDB Connection Options
+const isProduction = process.env.NODE_ENV === 'production';
+
 const mongoOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   serverSelectionTimeoutMS: 5000,
   socketTimeoutMS: 45000,
-  ssl: true,
-  tls: true,
-  tlsAllowInvalidCertificates: false,
+  ...(isProduction && {
+    ssl: true,
+    tls: true,
+    tlsAllowInvalidCertificates: false,
+  }),
   retryWrites: true,
 };
 

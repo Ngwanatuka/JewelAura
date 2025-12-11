@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { mobile } from '../responsive';
+import { AutoAwesome, LocalShipping, Diamond } from '@mui/icons-material';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -284,17 +285,17 @@ const Landing = () => {
         <SectionTitle>Why Choose JewelAura?</SectionTitle>
         <BenefitsGrid>
           <Benefit>
-            <BenefitIcon>✨</BenefitIcon>
+            <BenefitIcon><AutoAwesome sx={{ fontSize: "3rem", color: "var(--primary)" }} /></BenefitIcon>
             <BenefitTitle>Premium Quality</BenefitTitle>
             <BenefitText>Handcrafted jewelry with the finest materials and attention to detail.</BenefitText>
           </Benefit>
           <Benefit>
-            <BenefitIcon>🚚</BenefitIcon>
+            <BenefitIcon><LocalShipping sx={{ fontSize: "3rem", color: "var(--primary)" }} /></BenefitIcon>
             <BenefitTitle>Free Shipping</BenefitTitle>
             <BenefitText>Complimentary shipping on all orders over R1000 nationwide.</BenefitText>
           </Benefit>
           <Benefit>
-            <BenefitIcon>💎</BenefitIcon>
+            <BenefitIcon><Diamond sx={{ fontSize: "3rem", color: "var(--primary)" }} /></BenefitIcon>
             <BenefitTitle>Lifetime Warranty</BenefitTitle>
             <BenefitText>We stand behind our craftsmanship with a comprehensive warranty.</BenefitText>
           </Benefit>

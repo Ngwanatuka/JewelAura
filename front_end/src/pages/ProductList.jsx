@@ -5,6 +5,7 @@ import Announcements from "../components/Announcement";
 import Products from "../components/Products";
 import { useLocation } from "react-router";
 import { useState } from "react";
+import { Circle, CircleOutlined } from "@mui/icons-material";
 
 const Container = styled.div`
   background: #f8f8f8;
@@ -68,12 +69,6 @@ const FilterItem = styled.li`
 
   &:hover {
     color: #d4af37;
-  }
-
-  &::before {
-    content: ${props => props.active ? '"●"' : '"○"'};
-    color: ${props => props.active ? '#d4af37' : '#ccc'};
-    font-size: 12px;
   }
 `;
 
@@ -245,6 +240,10 @@ const ProductList = () => {
                   active={cat === category.value || (!cat && !category.value)}
                   onClick={() => window.location.href = `/products/${category.value}`}
                 >
+                  {cat === category.value || (!cat && !category.value) ?
+                    <Circle sx={{ fontSize: 12, color: '#d4af37' }} /> :
+                    <CircleOutlined sx={{ fontSize: 12, color: '#ccc' }} />
+                  }
                   {category.name}
                 </FilterItem>
               ))}
@@ -260,6 +259,10 @@ const ProductList = () => {
                   active={filters.color === material.value}
                   onClick={() => handleFilterClick('color', material.value)}
                 >
+                  {filters.color === material.value ?
+                    <Circle sx={{ fontSize: 12, color: '#d4af37' }} /> :
+                    <CircleOutlined sx={{ fontSize: 12, color: '#ccc' }} />
+                  }
                   {material.name}
                 </FilterItem>
               ))}

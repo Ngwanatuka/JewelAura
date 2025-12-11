@@ -1,7 +1,5 @@
-FROM node:18-alpine
-
-LABEL org.opencontainers.image.source=https://github.com/Ngwanatuka/JewelAura
-LABEL org.opencontainers.image.description="JewelAura Frontend React App"
+# Stage 1: Build the React application
+FROM node:18-alpine AS builder
 
 WORKDIR /app
 
@@ -9,7 +7,16 @@ COPY package*.json ./
 RUN npm install --legacy-peer-deps
 
 COPY . .
+RUN npm run build
 
-EXPOSE 3000
+# Stage 2: Serve the application with Nginx
+FROM nginx:alpine
 
-CMD ["npm", "run", "dev", "--", "--host", "--no-open"]
+# Copy the build output to replace the default nginx contents.
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
+
+# Start Nginx server
+CMD ["nginx", "-g", "daemon off;"]

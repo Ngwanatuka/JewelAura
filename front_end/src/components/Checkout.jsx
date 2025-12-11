@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { userRequest } from '../requestMethods';
+import { Lock } from '@mui/icons-material';
 
 const Container = styled.div`
   padding: 20px;
@@ -232,7 +233,7 @@ const Checkout = () => {
         </PayButton>
 
         <YocoLogo>
-          🔒 Secure payment powered by Yoco
+          <Lock sx={{ fontSize: 16, verticalAlign: 'middle', mr: 1 }} /> Secure payment powered by Yoco
           <br />
           <small>You will be redirected to Yoco to complete your payment</small>
         </YocoLogo>
