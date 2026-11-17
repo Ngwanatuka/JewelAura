@@ -55,10 +55,51 @@ router.delete("/:id", verifyTokenAndAdmin, async (req, res) => {
 
 router.get("/find/:userId", verifyTokenAndAuthorization, async (req, res) => {
   try {
-    const orders = await Order.find({ userId: req.params.userId });
+    console.log('Fetching orders for userId:', req.params.userId);
+    console.log('Authenticated user:', req.user?.id);
+
+    const orders = await Order.find({ userId: req.params.userId })
+      .sort({ createdAt: -1 }); // Most recent first
+
+    console.log(`Found ${orders.length} orders for user ${req.params.userId}`);
     res.status(200).json(orders);
   } catch (err) {
+    console.error('Error fetching user orders:', err);
     res.status(500).json(err);
+  }
+});
+
+// DEBUG ENDPOINT - Get order statistics for troubleshooting
+router.get("/debug/:userId", verifyToken, async (req, res) => {
+  try {
+    const allOrders = await Order.find({}).limit(10);
+    const userOrders = await Order.find({ userId: req.params.userId });
+
+    // Get sample of different userId formats in database
+    const userIdSamples = await Order.aggregate([
+      { $group: { _id: "$userId" } },
+      { $limit: 5 }
+    ]);
+
+    res.status(200).json({
+      totalOrdersInDb: await Order.countDocuments(),
+      userOrdersFound: userOrders.length,
+      userIdSearched: req.params.userId,
+      userIdType: typeof req.params.userId,
+      authenticatedUserId: req.user?.id,
+      userIdSamples: userIdSamples.map(s => ({ userId: s._id, type: typeof s._id })),
+      sampleOrders: allOrders.map(o => ({
+        orderId: o._id,
+        userId: o.userId,
+        userIdType: typeof o.userId,
+        amount: o.amount,
+        status: o.status,
+        createdAt: o.createdAt
+      }))
+    });
+  } catch (err) {
+    console.error('Debug endpoint error:', err);
+    res.status(500).json({ error: err.message });
   }
 });
 

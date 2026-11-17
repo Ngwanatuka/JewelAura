@@ -5,7 +5,10 @@ const verifyToken = (req, res, next) => {
   if (authHeader) {
     const token = authHeader.split(" ")[1];
     jwt.verify(token, process.env.JWT_SEC, (err, user) => {
-      if (err) res.status(403).json("Token is not valid!");
+      if (err) {
+        console.error('Token verification failed:', err.message);
+        return res.status(403).json("Token is not valid!");
+      }
       req.user = user;
       next();
     });
@@ -16,20 +19,25 @@ const verifyToken = (req, res, next) => {
 
 const verifyTokenAndAuthorization = (req, res, next) => {
   verifyToken(req, res, () => {
-    if (req.user.id === req.params.id || req.user.isAdmin) {
+    // Check both id and userId params for authorization
+    const paramId = req.params.id || req.params.userId;
+    if (req.user.id === paramId || req.user.isAdmin) {
       next();
     } else {
-      res.status(403).json("You are not alowed to do that!");
+      console.log('Authorization failed:', { userId: req.user.id, paramId, isAdmin: req.user.isAdmin });
+      res.status(403).json("You are not allowed to do that!");
     }
   });
 };
 
 const verifyTokenAndAdmin = (req, res, next) => {
   verifyToken(req, res, () => {
+    console.log('Admin check:', { userId: req.user?.id, isAdmin: req.user?.isAdmin });
     if (req.user && req.user.isAdmin) {
       next();
     } else {
-      res.status(403).json("You are not alowed to do that!");
+      console.log('Admin access denied for user:', req.user?.id);
+      res.status(403).json("You are not allowed to do that!");
     }
   });
 };
