@@ -8,13 +8,14 @@ import {
   MailOutline,
 } from "@material-ui/icons";
 import styled from "styled-components";
-import { mobile } from "../responsive";
+import { mobile, tablet } from "../responsive";
 
 const Container = styled.div`
   display: flex;
   background-color: var(--bg-main);
   color: var(--text-main);
   padding: 40px 0;
+  ${tablet({ flexDirection: "column" })}
   ${mobile({ flexDirection: "column" })}
 `;
 

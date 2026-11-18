@@ -9,14 +9,12 @@ RUN npm install --legacy-peer-deps
 COPY . .
 RUN npm run build
 
-# Stage 2: Serve the application with Nginx
+# Stage 2: Serve the application with Nginx (SPA history fallback enabled)
 FROM nginx:alpine
 
-# Copy the build output to replace the default nginx contents.
+COPY nginx-spa.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Expose port 80
 EXPOSE 80
 
-# Start Nginx server
 CMD ["nginx", "-g", "daemon off;"]

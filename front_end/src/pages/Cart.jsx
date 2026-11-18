@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Announcement from "../components/Announcement";
 import { Add, Remove } from "@material-ui/icons";
-import { mobile } from "../responsive";
+import { mobile, tablet } from "../responsive";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { userRequest } from "../requestMethods";
@@ -67,6 +67,8 @@ const TopTexts = styled.div`
 const Bottom = styled.div`
   display: flex;
   justify-content: space-between;
+  gap: 20px;
+  ${tablet({ flexDirection: "column" })}
   ${mobile({ flexDirection: "column" })}
 `;
 
@@ -77,12 +79,14 @@ const Info = styled.div`
 const Product = styled.div`
   display: flex;
   justify-content: space-between;
+  ${tablet({ flexDirection: "column", gap: "12px" })}
   ${mobile({ flexDirection: "column" })}
 `;
 
 const ProductDetail = styled.div`
   flex: 2;
   display: flex;
+  ${mobile({ flexDirection: "column", alignItems: "center" })}
 `;
 
 const Image = styled.img`
@@ -148,7 +152,8 @@ const Summary = styled.div`
   border: 0.5px solid lightgray;
   border-radius: 10px;
   padding: 20px;
-  height: 50vh;
+  min-height: 40vh;
+  height: fit-content;
 `;
 
 const SummaryTitle = styled.h1`

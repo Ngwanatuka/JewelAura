@@ -1,5 +1,5 @@
 // Product.jsx
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   FavoriteBorderOutlined,
   SearchOutlined,
@@ -106,14 +106,9 @@ const Product = ({ item }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state?.user?.currentUser);
-  const favorites = useSelector((state) => state?.favorites?.products ?? []);
-  const [isFavorited, setIsFavorited] = useState(false);
-
-  useEffect(() => {
-    // Check if product is in favorites
-    const favorited = favorites.some(fav => fav.productId === item._id);
-    setIsFavorited(favorited);
-  }, [favorites, item._id]);
+  const isFavorited = useSelector((state) =>
+    Boolean(state?.favorites?.products?.some((fav) => fav.productId === item._id))
+  );
 
   const handleAddToCart = () => {
     if (!user) {

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../redux/apiCalls";
 import { useNavigate } from "react-router-dom";
+import { mobile, tablet } from "../responsive";
 
 const Container = styled.div`
   width: 100vw;
@@ -21,6 +22,8 @@ const Container = styled.div`
 
 const Wrapper = styled.div`
   width: 25%;
+  min-width: 300px;
+  max-width: 420px;
   padding: 20px;
   background-color: rgba(255, 255, 255, 0.8);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -29,6 +32,8 @@ const Wrapper = styled.div`
   &:hover {
     transform: translateY(-5px);
   }
+  ${tablet({ width: "70%" })}
+  ${mobile({ width: "88%", minWidth: "0" })}
 `;
 
 const Title = styled.h1`

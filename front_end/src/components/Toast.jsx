@@ -17,7 +17,7 @@ const ToastContainer = styled.div`
   padding: 12px 20px;
   border-radius: 8px;
   box-shadow: var(--shadow-md);
-  animation: ${"${slideIn}"} 0.4s ease-out;
+  animation: ${slideIn} 0.4s ease-out;
   z-index: 1000;
 `;
 
