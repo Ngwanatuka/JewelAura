@@ -1,31 +1,39 @@
-
+import { lazy, Suspense } from "react";
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import './App.css'; // Include your CSS file
-import Product from "./pages/Product";
-import Home from "./pages/Home";
-import ProductList from "./pages/ProductList";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
-import Cart from "./pages/Cart";
-import Success from "./pages/Success";
-import Checkout from "./components/Checkout";
-import Landing from "./pages/Landing";
-import Profile from "./pages/Profile";
-import Favorites from "./pages/Favorites";
-import OrderHistory from "./pages/OrderHistory";
-import OrderTracking from "./pages/OrderTracking";
-import Returns from "./pages/Returns";
-import AdminLayout from "./components/admin/AdminLayout";
-import AdminHome from "./pages/admin/AdminHome";
-import AdminProductList from "./pages/admin/ProductList";
-import UserList from "./pages/admin/UserList";
-import OrderList from "./pages/admin/OrderList";
-import NewProduct from "./pages/admin/NewProduct";
-import Analytics from "./pages/admin/Analytics";
-import Sales from "./pages/admin/Sales";
 import { StyleSheetManager } from "styled-components";
+import "./App.css";
+import ErrorBoundary from "./components/ErrorBoundary";
+import Home from "./pages/Home";
+import Landing from "./pages/Landing";
+
+const Product = lazy(() => import("./pages/Product"));
+const ProductList = lazy(() => import("./pages/ProductList"));
+const Register = lazy(() => import("./pages/Register"));
+const Login = lazy(() => import("./pages/Login"));
+const Cart = lazy(() => import("./pages/Cart"));
+const Success = lazy(() => import("./pages/Success"));
+const Checkout = lazy(() => import("./components/Checkout"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Favorites = lazy(() => import("./pages/Favorites"));
+const OrderHistory = lazy(() => import("./pages/OrderHistory"));
+const OrderTracking = lazy(() => import("./pages/OrderTracking"));
+const Returns = lazy(() => import("./pages/Returns"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
+const AdminHome = lazy(() => import("./pages/admin/AdminHome"));
+const AdminProductList = lazy(() => import("./pages/admin/ProductList"));
+const UserList = lazy(() => import("./pages/admin/UserList"));
+const OrderList = lazy(() => import("./pages/admin/OrderList"));
+const NewProduct = lazy(() => import("./pages/admin/NewProduct"));
+const Analytics = lazy(() => import("./pages/admin/Analytics"));
+const Sales = lazy(() => import("./pages/admin/Sales"));
+
+const PageLoader = () => (
+  <div style={{ minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center", color: "#666" }}>
+    Loading...
+  </div>
+);
 
 export const App = () => {
   const user = useSelector((state) => state.user.currentUser);
@@ -60,20 +68,17 @@ export const App = () => {
         { path: "orders", element: <OrderList /> },
       ],
     },
+    { path: "*", element: <NotFound /> },
   ]);
 
   return (
-    <StyleSheetManager shouldForwardProp={(prop) => prop !== "slideIndex" && prop !== "bg"}>
-      <TransitionGroup>
-        <CSSTransition
-          key={window.location.pathname}
-          classNames="fade"
-          timeout={300}
-        >
+    <ErrorBoundary>
+      <StyleSheetManager shouldForwardProp={(prop) => prop !== "slideIndex" && prop !== "bg"}>
+        <Suspense fallback={<PageLoader />}>
           <RouterProvider router={routes} />
-        </CSSTransition>
-      </TransitionGroup>
-    </StyleSheetManager>
+        </Suspense>
+      </StyleSheetManager>
+    </ErrorBoundary>
   );
 };
 

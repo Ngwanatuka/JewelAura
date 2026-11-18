@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "nodemon index.js",
+    "start:prod": "node index.js",
     "test": "jest",
     "test:auth": "jest working-auth.test.js",
     "seed": "node seed-products.js",

@@ -13,9 +13,9 @@ COPY . .
 # Expose the API port (default 5000)
 EXPOSE 5000
 
-# Use non‑root user for security
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+# Ensure uploads directory exists and is owned by appuser
+RUN mkdir -p /app/uploads && addgroup -S appgroup && adduser -S appuser -G appgroup && chown -R appuser:appgroup /app/uploads
 USER appuser
 
-# Start the server
-CMD ["npm", "start"]
+# Start the server in production mode (not nodemon)
+CMD ["node", "index.js"]

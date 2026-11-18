@@ -28,3 +28,26 @@ userRequest.interceptors.request.use((config) => {
   }
   return config;
 });
+
+userRequest.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401 && getToken()) {
+      try {
+        const persisted = JSON.parse(localStorage.getItem("persist:root") || "{}");
+        if (persisted.user) {
+          const parsedUser = JSON.parse(persisted.user);
+          parsedUser.currentUser = null;
+          persisted.user = JSON.stringify(parsedUser);
+          localStorage.setItem("persist:root", JSON.stringify(persisted));
+        }
+      } catch (_) {
+        // ignore storage parse errors
+      }
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
+    }
+    return Promise.reject(error);
+  }
+);

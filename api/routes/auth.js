@@ -1,69 +1,86 @@
 import { Router } from "express";
 import User from "../models/User.js";
 import CryptoJS from "crypto-js";
+import crypto from "crypto";
 import jwt from "jsonwebtoken";
 
 const router = Router();
+
+const hashPassword = (password) => {
+  const salt = crypto.randomBytes(16).toString("hex");
+  const derived = crypto.scryptSync(password, salt, 64).toString("hex");
+  return `scrypt:${salt}:${derived}`;
+};
+
+const verifyPassword = (inputPassword, storedPassword) => {
+  if (storedPassword.startsWith("scrypt:")) {
+    const [, salt, hash] = storedPassword.split(":");
+    const derived = crypto.scryptSync(inputPassword, salt, 64);
+    const storedBuf = Buffer.from(hash, "hex");
+    return derived.length === storedBuf.length && crypto.timingSafeEqual(derived, storedBuf);
+  }
+  // Legacy CryptoJS.AES fallback
+  if (!process.env.PASS_SEC) return false;
+  const decrypted = CryptoJS.AES.decrypt(storedPassword, process.env.PASS_SEC).toString(CryptoJS.enc.Utf8);
+  return decrypted === inputPassword;
+};
 
 // Register
 router.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
 
-  // Check if the user already exists
+  if (!username || !email || !password) {
+    return res.status(400).json({ message: "Username, email, and password are required." });
+  }
+  if (typeof password !== "string" || password.length < 6) {
+    return res.status(400).json({ message: "Password must be at least 6 characters long." });
+  }
+
   try {
-    const existingUser = await User.findOne({ email: email });
+    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
-      return res.status(400).json({ message: 'User already exists.' });
+      return res.status(400).json({ message: "User already exists." });
     }
 
-    // Encrypt the password
-    const encryptedPassword = CryptoJS.AES.encrypt(password, process.env.PASS_SEC).toString();
-
-    // Create a new user
     const newUser = new User({
-      username,
-      email,
-      password: encryptedPassword
+      username: username.trim(),
+      email: email.trim().toLowerCase(),
+      password: hashPassword(password),
     });
 
-    // Save user to database
     const savedUser = await newUser.save();
-
-    // Remove sensitive information before sending response
     const { password: _, ...userWithoutPassword } = savedUser._doc;
 
     res.status(201).json(userWithoutPassword);
   } catch (err) {
-    console.error("Error during registration:", err);
-    res.status(500).json({ message: 'Internal server error', error: err });
+    console.error("Error during registration:", err.message);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
 // Login
 router.post("/login", async (req, res) => {
-  try {
-    const user = await User.findOne({
-      username: req.body.username,
-    });
+  const { username, password: inputPassword } = req.body;
 
+  if (!username || !inputPassword) {
+    return res.status(400).json({ message: "Username and password are required." });
+  }
+
+  try {
+    const user = await User.findOne({ username });
     if (!user) {
-      console.log("User not found:", req.body.username);
-      return res.status(401).json("Wrong username");
+      return res.status(401).json("Invalid credentials");
     }
 
-    const hashedPassword = CryptoJS.AES.decrypt(
-      user.password,
-      process.env.PASS_SEC
-    );
+    const isValid = verifyPassword(inputPassword, user.password);
+    if (!isValid) {
+      return res.status(401).json("Invalid credentials");
+    }
 
-    const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
-    const inputPassword = req.body.password;
-
-    if (originalPassword !== inputPassword) {
-      console.log("Password mismatch for user:", req.body.username);
-      console.log("Expected:", originalPassword);
-      console.log("Received:", inputPassword);
-      return res.status(401).json("Wrong password");
+    // Upgrade legacy CryptoJS passwords to scrypt on successful login
+    if (!user.password.startsWith("scrypt:")) {
+      user.password = hashPassword(inputPassword);
+      await user.save();
     }
 
     const accessToken = jwt.sign(
@@ -78,7 +95,8 @@ router.post("/login", async (req, res) => {
     const { password, ...others } = user._doc;
     res.status(200).json({ ...others, accessToken });
   } catch (err) {
-    res.status(500).json(err);
+    console.error("Error during login:", err.message);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 

@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 import userRoutes from './routes/user.js';
 import authRoutes from './routes/auth.js';
 import productRoutes from './routes/product.js';
@@ -13,19 +15,22 @@ import favoritesRoute from './routes/favorites.js';
 import reviewRoutes from './routes/review.js';
 import returnRoutes from './routes/return.js';
 import loyaltyRoutes from './routes/loyalty.js';
+import { verifyTokenAndAdmin } from './routes/verifyToken.js';
 
 dotenv.config();
 
-// MongoDB Connection with SSL/TLS configuration
-// MongoDB Connection Options
 const isProduction = process.env.NODE_ENV === 'production';
 
+// Ensure uploads directory exists
+if (!fs.existsSync('uploads')) {
+  fs.mkdirSync('uploads', { recursive: true });
+}
+
+// MongoDB Connection Options
 const mongoOptions = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
   serverSelectionTimeoutMS: 5000,
   socketTimeoutMS: 45000,
-  ...(isProduction && {
+  ...(isProduction && process.env.MONGO_SSL === 'true' && {
     ssl: true,
     tls: true,
     tlsAllowInvalidCertificates: false,
@@ -33,32 +38,74 @@ const mongoOptions = {
   retryWrites: true,
 };
 
-mongoose.connect(process.env.MONGO_URL, mongoOptions)
-  .then(() => console.log("✅ Connected to MongoDB Atlas"))
-  .catch((err) => {
-    console.error("❌ MongoDB connection error:", err.message);
-    console.log("\n💡 Troubleshooting tips:");
-    console.log("1. Check your MongoDB Atlas connection string in .env");
-    console.log("2. Ensure your IP address is whitelisted in MongoDB Atlas");
-    console.log("3. Verify your database user credentials");
-    console.log("4. Check if MongoDB Atlas cluster is running");
-    // Don't exit - allow app to run for other routes
-  });
+if (process.env.MONGO_URL) {
+  mongoose.connect(process.env.MONGO_URL, mongoOptions)
+    .then(() => console.log("✅ Connected to MongoDB"))
+    .catch((err) => {
+      console.error("❌ MongoDB connection error:", err.message);
+    });
+} else {
+  console.warn("⚠️ MONGO_URL is not set");
+}
 
 const app = express();
+app.disable('x-powered-by');
 
-// CORS Configuration - MUST be first
+// Basic Security Headers
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
+});
+
+// Simple in-memory rate limiter for auth endpoints
+const authAttempts = new Map();
+const authRateLimiter = (req, res, next) => {
+  if (process.env.NODE_ENV === 'test') return next();
+  const ip = req.ip || req.connection?.remoteAddress || 'unknown';
+  const now = Date.now();
+  const windowMs = 15 * 60 * 1000;
+  const maxAttempts = 30;
+  const entry = authAttempts.get(ip);
+
+  if (!entry || now - entry.start > windowMs) {
+    authAttempts.set(ip, { count: 1, start: now });
+    return next();
+  }
+  entry.count += 1;
+  if (entry.count > maxAttempts) {
+    return res.status(429).json({ message: 'Too many requests, please try again later.' });
+  }
+  next();
+};
+
+// CORS Configuration
+const envOrigins = [
+  process.env.FRONTEND_URL,
+  ...(process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',').map((o) => o.trim()) : []),
+].filter(Boolean);
+
+const devOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://localhost:3002",
+  "http://localhost:3003",
+  "http://127.0.0.1:3000",
+  "http://127.0.0.1:3001",
+  "http://127.0.0.1:3002",
+  "http://127.0.0.1:3003"
+];
+
+const allowedOrigins = isProduction ? envOrigins : [...new Set([...devOrigins, ...envOrigins])];
+
 const corsOptions = {
-  origin: [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "http://localhost:3002",
-    "http://localhost:3003",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:3001",
-    "http://127.0.0.1:3002",
-    "http://127.0.0.1:3003"
-  ],
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'token'],
@@ -67,31 +114,38 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 
-// Multer Configuration
+// Multer Configuration with file type and size limits
 const storage = multer.diskStorage({
-  // Callback function to control the folder where the uploaded files will be saved.
-  // In this case, all files will be saved in the 'uploads' folder.
   destination: (req, file, cb) => {
     cb(null, 'uploads');
   },
-  // Callback function to control the filename of the uploaded files.
-  // In this case, each filename will be a combination of the current timestamp
-  // and the original filename from the client. This is to avoid filename collisions.
   filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname);
+    const safeName = path.basename(file.originalname).replace(/[^a-zA-Z0-9._-]/g, '_');
+    cb(null, `${Date.now()}-${safeName}`);
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max
+  fileFilter: (req, file, cb) => {
+    const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (allowedMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files (JPEG, PNG, WebP, GIF) are allowed'));
+    }
+  },
+});
 
 // Serve Static Files
 app.use('/uploads', express.static('uploads'));
 
 // Routes
 app.use("/api/users", userRoutes);
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", authRateLimiter, authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/carts", cartRoutes);
 app.use("/api/orders", orderRoutes);
@@ -103,24 +157,41 @@ app.use("/api/loyalty", loyaltyRoutes);
 
 // Health Check Route
 app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'OK',
+  const dbReady = mongoose.connection.readyState === 1;
+  res.status(dbReady || !isProduction ? 200 : 503).json({
+    status: dbReady ? 'OK' : 'DEGRADED',
+    database: dbReady ? 'connected' : 'disconnected',
     timestamp: new Date().toISOString(),
     uptime: process.uptime()
   });
 });
 
-// Upload Route
-app.post('/api/upload', upload.single('img'), (req, res) => {
-  try {
-    const imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
-    res.status(200).json({ imageUrl });
-  } catch (error) {
-    res.status(500).json({ message: 'Image upload failed', error });
+// Protected Admin Upload Route
+app.post('/api/upload', verifyTokenAndAdmin, upload.single('img'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No image file provided' });
   }
+  const baseUrl = process.env.BACKEND_URL || '';
+  const imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
+  res.status(200).json({ imageUrl });
+});
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err.message);
+  if (err instanceof multer.MulterError || err.message?.includes('Only image files')) {
+    return res.status(400).json({ message: err.message });
+  }
+  if (err.message === 'Not allowed by CORS') {
+    return res.status(403).json({ message: 'CORS origin not allowed' });
+  }
+  res.status(err.status || 500).json({
+    message: isProduction ? 'Internal server error' : err.message || 'Internal server error',
+  });
 });
 
 // Start Server
-app.listen(process.env.PORT || 5000, () => {
-  console.log("Server is running on port 5000");
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });

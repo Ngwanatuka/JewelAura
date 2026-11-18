@@ -1,20 +1,20 @@
 import express from 'express';
 import axios from 'axios';
+import crypto from 'crypto';
 import Order from '../models/Order.js';
 import Cart from '../models/Cart.js';
+import Product from '../models/Product.js';
 import LoyaltyPoints from '../models/LoyaltyPoints.js';
 import { sendEmail } from '../services/emailService.js';
 import { POINTS_CONFIG } from './loyalty.js';
+import { verifyToken } from './verifyToken.js';
 
 const router = express.Router();
 
-// Yoco API configuration
-const YOCO_API_URL = process.env.YOCO_MODE === 'live'
-    ? 'https://payments.yoco.com/api'
-    : 'https://payments.yoco.com/api'; // Yoco uses same URL for both
+const YOCO_API_URL = 'https://payments.yoco.com/api';
 
-// Create checkout session
-router.post('/create-checkout', async (req, res) => {
+// Create checkout session (authenticated)
+router.post('/create-checkout', verifyToken, async (req, res) => {
     try {
         const { userId, address, cart: requestCart } = req.body;
 
@@ -22,13 +22,14 @@ router.post('/create-checkout', async (req, res) => {
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
-        let cart;
+        if (req.user.id !== userId && !req.user.isAdmin) {
+            return res.status(403).json({ error: 'You are not allowed to create a checkout for another user' });
+        }
 
-        // Use cart from request if provided (for frontend Redux state)
+        let cart;
         if (requestCart && requestCart.products && requestCart.products.length > 0) {
             cart = requestCart;
         } else {
-            // Fallback to database cart
             cart = await Cart.findOne({ userId });
         }
 
@@ -36,11 +37,42 @@ router.post('/create-checkout', async (req, res) => {
             return res.status(400).json({ error: 'Cart is empty' });
         }
 
-        // Create order
+        // Recalculate authoritative prices from Product catalog when product IDs are present
+        let authoritativeTotal = 0;
+        const verifiedProducts = [];
+
+        for (const item of cart.products) {
+            const qty = Math.max(1, parseInt(item.quantity, 10) || 1);
+            const productId = item.productId || item._id;
+            let unitPrice = Number(item.price);
+            let title = item.title || 'Product';
+
+            if (productId && typeof Product?.findById === 'function') {
+                const dbProduct = await Product.findById(productId);
+                if (dbProduct) {
+                    unitPrice = Number(dbProduct.price);
+                    title = dbProduct.title || title;
+                }
+            }
+
+            if (!Number.isFinite(unitPrice) || unitPrice <= 0) {
+                return res.status(400).json({ error: `Invalid product price for ${title}` });
+            }
+
+            authoritativeTotal += unitPrice * qty;
+            verifiedProducts.push({
+                ...item,
+                title,
+                price: unitPrice,
+                quantity: qty,
+            });
+        }
+
+        // Create order with server-calculated total
         const order = new Order({
             userId,
-            products: cart.products,
-            amount: cart.total || 100,
+            products: verifiedProducts,
+            amount: authoritativeTotal,
             address,
             status: 'pending',
             deliveryStatus: 'processing',
@@ -50,7 +82,7 @@ router.post('/create-checkout', async (req, res) => {
 
         // Create Yoco checkout session
         const checkoutData = {
-            amount: Math.round((cart.total || 100) * 100), // Amount in cents
+            amount: Math.round(authoritativeTotal * 100), // Amount in cents
             currency: 'ZAR',
             successUrl: `${process.env.FRONTEND_URL}/success?orderId=${order._id}`,
             cancelUrl: `${process.env.FRONTEND_URL}/cart`,
@@ -59,16 +91,15 @@ router.post('/create-checkout', async (req, res) => {
                 orderId: order._id.toString(),
                 userId: userId,
             },
-            lineItems: cart.products.map(item => ({
-                displayName: item.title || 'Product',
+            lineItems: verifiedProducts.map(item => ({
+                displayName: item.title,
                 quantity: item.quantity,
                 pricingDetails: {
-                    price: Math.round(item.price * 100), // Price in cents
+                    price: Math.round(item.price * 100),
                 },
             })),
         };
 
-        // Call Yoco API to create checkout
         const response = await axios.post(
             `${YOCO_API_URL}/checkouts`,
             checkoutData,
@@ -98,23 +129,43 @@ router.post('/create-checkout', async (req, res) => {
 // Webhook endpoint for Yoco payment notifications
 router.post('/webhook', async (req, res) => {
     try {
+        const webhookSecret = process.env.YOCO_WEBHOOK_SECRET;
+        if (webhookSecret) {
+            const signature = req.headers['x-yoco-signature'] || req.headers['webhook-signature'];
+            if (!signature) {
+                return res.status(401).send('Missing signature');
+            }
+            const expected = crypto
+                .createHmac('sha256', webhookSecret)
+                .update(JSON.stringify(req.body))
+                .digest('hex');
+            const sigBuf = Buffer.from(String(signature));
+            const expBuf = Buffer.from(expected);
+            if (sigBuf.length !== expBuf.length || !crypto.timingSafeEqual(sigBuf, expBuf)) {
+                return res.status(401).send('Invalid signature');
+            }
+        }
+
         const event = req.body;
 
-        // Verify webhook signature (recommended for production)
-        const signature = req.headers['x-yoco-signature'];
-
-        // Handle different event types
         if (event.type === 'payment.succeeded') {
-            const orderId = event.payload.metadata.orderId;
-            const userId = event.payload.metadata.userId;
+            const orderId = event.payload?.metadata?.orderId;
+            const userId = event.payload?.metadata?.userId;
 
-            // Update order
+            if (!orderId || !userId) {
+                return res.status(400).send('Missing metadata');
+            }
+
             const order = await Order.findById(orderId);
             if (order) {
+                // Idempotency guard: avoid double-awarding points on webhook retries
+                if (order.status === 'completed') {
+                    return res.status(200).send('OK');
+                }
+
                 order.status = 'completed';
                 await order.save();
 
-                // Award loyalty points
                 const pointsEarned = Math.floor(order.amount * POINTS_CONFIG.pointsPerDollar);
                 let loyalty = await LoyaltyPoints.findOne({ userId });
 
@@ -130,10 +181,8 @@ router.post('/webhook', async (req, res) => {
                 );
                 await loyalty.save();
 
-                // Clear cart
                 await Cart.findOneAndDelete({ userId });
 
-                // Send confirmation emails
                 try {
                     await sendEmail(userId, 'orderConfirmation', {
                         order,
@@ -158,12 +207,16 @@ router.post('/webhook', async (req, res) => {
     }
 });
 
-// Verify payment status
-router.get('/verify/:orderId', async (req, res) => {
+// Verify payment status (authenticated)
+router.get('/verify/:orderId', verifyToken, async (req, res) => {
     try {
         const order = await Order.findById(req.params.orderId);
         if (!order) {
             return res.status(404).json({ error: 'Order not found' });
+        }
+
+        if (order.userId.toString() !== req.user.id && !req.user.isAdmin) {
+            return res.status(403).json({ error: 'Access denied' });
         }
 
         res.status(200).json({

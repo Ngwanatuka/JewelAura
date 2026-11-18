@@ -1,5 +1,6 @@
 import request from 'supertest';
 import express from 'express';
+import jwt from 'jsonwebtoken';
 import yocoRoute from '../routes/yoco.js';
 import axios from 'axios';
 
@@ -10,6 +11,10 @@ jest.mock('axios');
 jest.mock('../models/Cart.js', () => ({
     findOne: jest.fn(),
     findOneAndDelete: jest.fn()
+}));
+
+jest.mock('../models/Product.js', () => ({
+    findById: jest.fn()
 }));
 
 jest.mock('../models/Order.js', () => {
@@ -40,13 +45,28 @@ app.use(express.json());
 app.use('/api/yoco', yocoRoute);
 
 describe('Yoco Payment Gateway', () => {
+    let authToken;
+
     beforeEach(() => {
         jest.clearAllMocks();
         process.env.YOCO_SECRET_KEY = 'sk_test_mock';
         process.env.FRONTEND_URL = 'http://localhost:3000';
+        process.env.JWT_SEC = 'test_jwt_secret';
+        authToken = jwt.sign({ id: 'user123', isAdmin: false }, process.env.JWT_SEC, { expiresIn: '1h' });
     });
 
     describe('POST /api/yoco/create-checkout', () => {
+        it('should return 401 if not authenticated', async () => {
+            const response = await request(app)
+                .post('/api/yoco/create-checkout')
+                .send({
+                    userId: 'user123',
+                    address: { street: '123 Test St' }
+                });
+
+            expect(response.status).toBe(401);
+        });
+
         it('should create a checkout session successfully', async () => {
             const Cart = require('../models/Cart.js');
             Cart.findOne.mockResolvedValue({
@@ -64,6 +84,7 @@ describe('Yoco Payment Gateway', () => {
 
             const response = await request(app)
                 .post('/api/yoco/create-checkout')
+                .set('token', `Bearer ${authToken}`)
                 .send({
                     userId: 'user123',
                     address: { street: '123 Test St' }
@@ -88,6 +109,7 @@ describe('Yoco Payment Gateway', () => {
 
             const response = await request(app)
                 .post('/api/yoco/create-checkout')
+                .set('token', `Bearer ${authToken}`)
                 .send({
                     userId: 'user123',
                     address: { street: '123 Test St' }

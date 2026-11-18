@@ -4,7 +4,7 @@ import Footer from "../components/Footer";
 import Announcements from "../components/Announcement";
 import Products from "../components/Products";
 import { useLocation } from "react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Circle, CircleOutlined } from "@mui/icons-material";
 
 const Container = styled.div`
@@ -191,8 +191,14 @@ const ProductList = () => {
   const cat = location.pathname.split("/")[2];
   const [filters, setFilters] = useState({});
   const [sort, setSort] = useState("newest");
-  const [searchQuery, setSearchQuery] = useState("");
+  const initialSearch = new URLSearchParams(location.search).get("search") || "";
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
+
+  useEffect(() => {
+    const q = new URLSearchParams(location.search).get("search") || "";
+    setSearchQuery(q);
+  }, [location.search]);
 
   const handleFilterClick = (filterType, value) => {
     setFilters(prev => ({
