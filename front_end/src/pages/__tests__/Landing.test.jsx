@@ -31,13 +31,13 @@ describe('Landing Page', () => {
   it('should render call-to-action button', () => {
     renderLanding();
 
-    expect(screen.getByText('Shop Now')).toBeInTheDocument();
+    expect(screen.getByText('Shop Collection')).toBeInTheDocument();
   });
 
-  it('should render featured categories section', () => {
+  it('should render featured collections section', () => {
     renderLanding();
 
-    expect(screen.getByText('Featured Categories')).toBeInTheDocument();
+    expect(screen.getByText('Featured Collections')).toBeInTheDocument();
   });
 
   it('should render why choose us section', () => {

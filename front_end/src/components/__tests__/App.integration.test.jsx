@@ -66,6 +66,7 @@ describe('App Integration Tests', () => {
     );
     
     // Landing page should be shown for unauthenticated users
-    expect(screen.queryByText(/checkout|orders/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/welcome to jewelaura/i)).toBeInTheDocument();
+    expect(screen.queryByText(/secure checkout/i)).not.toBeInTheDocument();
   });
 });

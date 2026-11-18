@@ -32,16 +32,16 @@ const renderWithProviders = (component, { initialState = {} } = {}) => {
 };
 
 describe('Shop Now Button Tests', () => {
-  test('should have Shop Now button linking to home page', () => {
+  test('should have Shop Collection button linking to products page', () => {
     renderWithProviders(<Landing />);
     
-    const shopNowButton = screen.getByText(/shop now/i);
-    expect(shopNowButton).toHaveAttribute('href', '/home');
+    const shopNowButton = screen.getByText(/shop collection/i);
+    expect(shopNowButton).toHaveAttribute('href', '/products');
   });
 
-  test('should show Shop Now button on landing page', () => {
+  test('should show Shop Collection button on landing page', () => {
     renderWithProviders(<Landing />);
     
-    expect(screen.getByText(/shop now/i)).toBeInTheDocument();
+    expect(screen.getByText(/shop collection/i)).toBeInTheDocument();
   });
 });

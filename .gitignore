@@ -69,3 +69,4 @@ yarn.lock
 
 # Local development files
 *.local
+.env.prod.example

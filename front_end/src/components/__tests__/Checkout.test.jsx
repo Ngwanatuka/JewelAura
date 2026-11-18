@@ -38,7 +38,7 @@ describe('Checkout Component', () => {
   it('should render checkout form', () => {
     renderCheckout();
     
-    expect(screen.getByText('Checkout')).toBeInTheDocument();
+    expect(screen.getByText('Secure Checkout')).toBeInTheDocument();
   });
 
   it('should render shipping address form', () => {
@@ -48,9 +48,9 @@ describe('Checkout Component', () => {
     expect(screen.getByPlaceholderText('Street Address')).toBeInTheDocument();
   });
 
-  it('should render place order button', () => {
+  it('should render proceed to payment button', () => {
     renderCheckout();
     
-    expect(screen.getByText('Place Order')).toBeInTheDocument();
+    expect(screen.getByText('Proceed to Payment')).toBeInTheDocument();
   });
 });
